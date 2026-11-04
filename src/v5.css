@@ -1,0 +1,623 @@
+.v5-brand {
+  font-size: 17px !important;
+  color: var(--d-ink) !important;
+  font-weight: 450 !important;
+  letter-spacing: -0.6px;
+  display: flex;
+  gap: 4px;
+}
+.v5-brand b {
+  font-weight: 500;
+  color: var(--d-lime);
+}
+.v5-card {
+  animation: none;
+  border-radius: 17px;
+  background: color-mix(in srgb, var(--d-surface) 90%, transparent);
+  backdrop-filter: blur(16px);
+}
+.v5-layout {
+  display: grid;
+  grid-template-columns: minmax(250px, 0.8fr) minmax(0, 1.6fr);
+}
+.v5-guidance {
+  background: linear-gradient(150deg, #b4db8010, transparent 80%);
+  border-right: 1px solid var(--d-line);
+  padding: 26px 24px;
+}
+.v5-guidance .d-card-intro {
+  padding: 0;
+}
+.v5-guidance .d-card-intro h1 {
+  font-size: 27px;
+  line-height: 1.4;
+  letter-spacing: -0.7px;
+}
+.v5-guidance .d-card-intro p {
+  font-size: 12px;
+}
+.v5-workspace {
+  min-width: 0;
+}
+.v5-workspace .d-workbench {
+  grid-template-columns: 1fr;
+  border-top: 0;
+  min-height: 0;
+}
+.v5-workspace .d-code-panel {
+  border-right: 0;
+  border-bottom: 1px solid var(--d-line);
+}
+.v5-workspace .d-source {
+  padding: 18px 0;
+}
+.v5-workspace .d-source pre,
+.v5-workspace .d-lines {
+  font-size: 11px;
+  line-height: 1.9;
+}
+.v5-workspace .d-preview-body {
+  min-height: 215px;
+  padding: 23px;
+}
+.v5-workspace .d-controls {
+  padding: 15px 18px;
+  gap: 12px;
+}
+.v5-workspace .d-controls label {
+  font-size: 9px;
+}
+.v5-workspace .d-controls input {
+  width: 125px;
+  font-size: 11px;
+}
+.v5-workspace .d-toggle button {
+  font-size: 9px;
+  padding: 7px 9px;
+}
+.v5-workspace .d-action {
+  font-size: 10px;
+  padding: 9px 11px;
+}
+.v5-task {
+  border: 1px solid color-mix(in srgb, var(--d-lime) 25%, var(--d-line));
+  background: var(--d-accent);
+  padding: 15px 16px;
+  border-radius: 8px;
+  margin: 25px 0;
+}
+.v5-task > span {
+  font-size: 7px;
+  letter-spacing: 1.5px;
+  color: var(--d-lime);
+}
+.v5-task p {
+  font-size: 12px;
+  color: var(--d-ink);
+  margin-top: 9px;
+  line-height: 1.9;
+}
+.v5-step-separator {
+  color: var(--d-muted);
+  margin: 0 9px;
+}
+.v5-badges {
+  display: flex;
+  gap: 9px;
+  flex-wrap: wrap;
+  margin: -10px 0 18px;
+}
+.v5-badges:empty {
+  display: none;
+}
+.v5-badges > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 8px;
+  color: var(--d-lime);
+  background: var(--d-accent);
+  border: 1px solid var(--d-line);
+  border-radius: 15px;
+  padding: 5px 10px;
+}
+.v5-explore-result {
+  font-size: 10px;
+  line-height: 1.9;
+  color: var(--d-muted);
+  padding: 14px 19px;
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  background: var(--d-panel);
+}
+.v5-explore-result.complete {
+  color: var(--d-lime);
+  background: var(--d-accent);
+  animation: v5-check 0.5s;
+}
+.v5-more-help {
+  padding: 10px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 13px;
+}
+.v5-more-help pre {
+  font-size: 11px;
+  line-height: 1.9;
+  background: var(--d-code);
+  border: 1px solid var(--d-line);
+  border-radius: 7px;
+  padding: 18px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.audio-narrator {
+  border-top: 1px solid var(--d-line);
+  padding-top: 20px;
+}
+.audio-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+.audio-top > span {
+  font-size: 7px;
+  letter-spacing: 1px;
+  color: var(--d-muted);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.audio-top select {
+  max-width: 100%;
+  font-size: 10px;
+  padding: 7px;
+  background: var(--d-code);
+  border-color: var(--d-line);
+  color: var(--d-ink);
+}
+.audio-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 17px 0;
+}
+.audio-controls > button {
+  height: 31px;
+  min-width: 30px;
+  border: 1px solid var(--d-line);
+  border-radius: 5px;
+  color: var(--d-lime);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px;
+  font-size: 10px;
+}
+.audio-controls > button:first-child {
+  padding: 6px 10px;
+  background: var(--d-accent);
+}
+.audio-controls select {
+  background: var(--d-code);
+  border-color: var(--d-line);
+  font-size: 10px;
+  padding: 6px;
+  color: var(--d-muted);
+  width: 53px;
+}
+.audio-wave {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 22px;
+  margin-left: auto;
+}
+.audio-wave i {
+  height: 4px;
+  width: 2px;
+  background: var(--d-muted);
+  border-radius: 2px;
+}
+.audio-wave.speaking i {
+  background: var(--d-lime);
+  animation: audio-wave 0.6s ease-in-out infinite alternate;
+}
+.audio-wave.speaking i:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.audio-wave.speaking i:nth-child(3) {
+  animation-delay: 0.4s;
+}
+.audio-autoplay {
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--d-muted);
+  line-height: 1.6;
+}
+.audio-autoplay input {
+  accent-color: var(--d-lime);
+}
+.audio-notice {
+  font-size: 9px;
+  line-height: 1.9;
+  color: var(--d-muted);
+  margin: 15px 0;
+}
+.audio-transcript-toggle {
+  font-size: 9px;
+  color: var(--d-muted);
+  border-bottom: 1px dotted var(--d-line);
+  padding: 3px 0;
+  margin-top: 15px;
+}
+.audio-transcript {
+  font-size: 12px;
+  color: var(--d-muted);
+  line-height: 1.9;
+  background: var(--d-panel);
+  border: 1px solid var(--d-line);
+  border-radius: 5px;
+  padding: 12px;
+  margin-top: 12px;
+}
+.micro-code {
+  min-width: 0;
+}
+.micro-file-tabs {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  min-height: 42px;
+  background: var(--d-code);
+  border-bottom: 1px solid var(--d-line);
+  padding: 0 12px;
+}
+.micro-file-tabs button {
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--d-muted);
+  padding: 12px 8px;
+}
+.micro-file-tabs button[aria-pressed="true"] {
+  color: var(--d-lime);
+  border-bottom: 2px solid var(--d-lime);
+}
+.micro-file-tabs .micro-reset {
+  margin-left: auto;
+}
+.micro-editor {
+  border-bottom: 1px solid var(--d-line);
+}
+.micro-editor-loading {
+  font-size: 12px;
+  color: var(--d-muted);
+  padding: 24px;
+  text-align: center;
+}
+.micro-frame iframe {
+  width: 100%;
+  height: 245px;
+  border: 0;
+  background: #172220;
+  display: block;
+}
+.micro-result {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 10px;
+  line-height: 1.9;
+  color: var(--d-muted);
+  padding: 16px 19px;
+  border-top: 1px solid var(--d-line);
+  background: var(--d-panel);
+  overflow-wrap: anywhere;
+}
+.micro-result.solved {
+  color: var(--d-lime);
+  background: var(--d-accent);
+  animation: v5-check 0.5s;
+}
+.micro-result > svg {
+  margin-top: 2px;
+}
+.micro-wait-dot {
+  width: 5px;
+  height: 5px;
+  margin-top: 7px;
+  background: var(--d-muted);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.deck-app .monaco-editor textarea {
+  border: 0;
+  border-radius: 0;
+}
+.deck-app .monaco-editor {
+  outline: none;
+}
+.deck-app .monaco-editor .inputarea {
+  color: transparent !important;
+  background: transparent !important;
+}
+.deck-app .d-brand > span.v5-brand {
+  margin: 0;
+  background: none;
+  border: 0;
+  width: auto;
+  height: auto;
+}
+.deck-app .d-next:disabled {
+  filter: none;
+  transform: none;
+  opacity: 0.4;
+}
+.v5-card + .d-bottom-nav {
+  border-top: 0;
+}
+@keyframes audio-wave {
+  to {
+    height: 19px;
+  }
+}
+@keyframes v5-check {
+  from {
+    box-shadow: inset 0 0 18px #c5e7a022;
+  }
+  to {
+    box-shadow: none;
+  }
+}
+@media (max-width: 1050px) {
+  .v5-layout {
+    grid-template-columns: minmax(240px, 0.85fr) minmax(0, 1.35fr);
+  }
+  .v5-guidance {
+    padding: 24px 20px;
+  }
+  .v5-guidance .d-card-intro h1 {
+    font-size: 25px;
+  }
+  .audio-top select {
+    font-size: 9px;
+  }
+  .v5-workspace .d-controls {
+    gap: 11px;
+  }
+  .v5-workspace .d-controls input {
+    width: 115px;
+  }
+  .audio-controls {
+    gap: 6px;
+  }
+  .audio-controls select {
+    width: 49px;
+    font-size: 9px;
+  }
+}
+@media (max-width: 800px) {
+  .v5-layout {
+    grid-template-columns: 1fr;
+  }
+  .v5-guidance {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr);
+    gap: 0 25px;
+    padding: 25px;
+  }
+  .v5-guidance .d-card-intro {
+    grid-column: 1;
+  }
+  .v5-task {
+    grid-column: 1;
+    margin: 20px 0 0;
+  }
+  .audio-narrator {
+    grid-column: 2;
+    grid-row: 1/3;
+    border-top: 0;
+    padding-top: 0;
+    border-left: 1px solid var(--d-line);
+    padding-left: 22px;
+    align-self: start;
+  }
+  .v5-guidance {
+    border-right: 0;
+    border-bottom: 1px solid var(--d-line);
+  }
+  .v5-workspace .d-workbench {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .v5-workspace .d-code-panel {
+    border-right: 1px solid var(--d-line);
+    border-bottom: 0;
+  }
+  .micro-code {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .micro-editor {
+    min-width: 0;
+    border-right: 1px solid var(--d-line);
+    border-bottom: 0;
+  }
+  .micro-frame {
+    min-width: 0;
+  }
+  .micro-frame iframe {
+    height: 280px;
+  }
+  .micro-result {
+    grid-column: 1/-1;
+  }
+  .v5-workspace .d-preview-body {
+    padding: 22px 17px;
+    min-height: 255px;
+  }
+  .v5-workspace .d-workbench .d-chips {
+    font-size: 10px;
+  }
+  .v5-workspace .d-binding-visual > div {
+    grid-template-columns: 36px 12px minmax(0, 1fr) auto;
+    gap: 6px;
+    padding: 11px 8px;
+  }
+  .v5-workspace .d-binding-visual b {
+    font-size: 10px;
+  }
+  .v5-workspace .d-binding-visual code {
+    font-size: 9px;
+  }
+}
+@media (max-width: 570px) {
+  .d-product-name {
+    display: none;
+  }
+  .v5-brand {
+    font-size: 15px !important;
+  }
+  .d-brand {
+    gap: 4px;
+  }
+  .d-topbar {
+    gap: 10px;
+  }
+  .d-topbar > div {
+    gap: 10px;
+  }
+  .d-brand > span:first-child {
+    margin-right: 4px;
+    width: 28px;
+    height: 30px;
+  }
+  .v5-layout,
+  .v5-guidance {
+    display: block;
+  }
+  .v5-guidance {
+    padding: 23px 20px;
+  }
+  .v5-guidance .d-card-intro h1 {
+    font-size: 26px;
+  }
+  .v5-guidance .d-card-intro p {
+    font-size: 12px;
+  }
+  .v5-task {
+    margin: 20px 0;
+  }
+  .audio-narrator {
+    padding: 18px 0 0;
+    border-left: 0;
+    border-top: 1px solid var(--d-line);
+  }
+  .audio-top select {
+    font-size: 10px;
+  }
+  .audio-controls {
+    gap: 9px;
+    margin: 15px 0;
+  }
+  .audio-autoplay {
+    font-size: 10px;
+  }
+  .audio-notice {
+    font-size: 9px;
+    max-width: 340px;
+    margin: 12px 0 0;
+  }
+  .audio-controls select {
+    font-size: 10px;
+    width: 56px;
+  }
+  .audio-transcript-toggle {
+    margin-top: 12px;
+  }
+  .v5-workspace .d-workbench {
+    display: block;
+  }
+  .v5-workspace .d-code-panel {
+    border-right: 0;
+    border-bottom: 1px solid var(--d-line);
+  }
+  .v5-workspace .d-preview-body {
+    min-height: 225px;
+    padding: 22px;
+  }
+  .micro-code {
+    display: block;
+  }
+  .micro-editor {
+    border-right: 0;
+    border-bottom: 1px solid var(--d-line);
+  }
+  .micro-frame iframe {
+    height: 230px;
+  }
+  .v5-workspace .d-controls {
+    padding: 17px 20px;
+    gap: 14px;
+  }
+  .v5-workspace .d-controls input {
+    width: 130px;
+  }
+  .v5-workspace .d-binding-visual > div {
+    grid-template-columns: 50px 13px minmax(0, 1fr) auto;
+    gap: 9px;
+  }
+  .v5-workspace .d-binding-visual b {
+    font-size: 11px;
+  }
+  .v5-workspace .d-binding-visual code {
+    font-size: 10px;
+  }
+  .v5-workspace .d-source pre,
+  .v5-workspace .d-lines {
+    font-size: 11px;
+  }
+  .d-progress-heading > span:last-child {
+    font-size: 7px;
+    letter-spacing: 0.6px;
+  }
+  .d-progress-heading > span:first-child {
+    font-size: 10px;
+  }
+  .v5-step-separator {
+    margin: 0 5px;
+  }
+  .v5-badges > span {
+    font-size: 7px;
+  }
+  .v5-explore-result {
+    font-size: 10px;
+  }
+  .micro-result {
+    font-size: 10px;
+  }
+  .d-topbar .d-outline-button {
+    width: 31px;
+    justify-content: center;
+  }
+  .d-topbar .d-icon-button {
+    width: 27px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .v5-card,
+  .audio-wave.speaking i,
+  .micro-result.solved,
+  .v5-explore-result.complete {
+    animation: none !important;
+    transition: none !important;
+  }
+}

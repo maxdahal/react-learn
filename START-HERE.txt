@@ -1,30 +1,20 @@
-SYNTAX LAB — START HERE
+REACT & JS DEEP DIVE — v5
 
-You don't need a cloud environment or to publish anything.
+1. Install Node.js 22 or newer from https://nodejs.org.
+2. Open a terminal in the folder containing package.json.
+3. Run: npm install
+4. Run: npm run dev
+5. Open the address printed by Vite, usually http://localhost:5173.
 
-1. Install Node.js 22 or newer from https://nodejs.org if you don't have it.
-2. Extract the entire ZIP.
-3. Open a terminal in the syntax-lab folder (the folder with package.json).
-4. Type: npm install
-5. When that finishes, type: npm run dev
-6. Open http://localhost:5173 in your browser.
-   If Vite prints a different address, use that one.
+Each of the 16 cards has an Explore task and a Code task.
+Follow the task, then use Next. Arrow keys work outside form controls.
+The code editor and its live React preview run locally.
 
-Keep the terminal open while you learn. Press Ctrl+C to stop the server.
-Next time, open the same folder and run npm run dev again.
+Play/Pause/Replay narrates in English or Nepali using your browser's voices.
+If no Nepali voice is installed, you can still read the Nepali script.
+Use "I'm confused" for progressive hints.
 
-Your progress and practice code are saved in that browser on that device.
-Use the same localhost address each time. Clearing browser storage clears progress.
+Progress, code drafts, narration preferences, and your old map-lab work
+are saved in this browser. No account or cloud publishing is needed.
 
-The website opens to JS to React: Step-by-Step, a deck of 16 interactive
-cards. Use Previous and Next, or open the lesson list to choose a topic.
-Change the controls to see the code and preview respond together.
-Use "I'm confused" for optional explanations.
-
-The detailed seven-step .map() lab is still available from card 5.
-Your previous lab answers, code, and progress are preserved in the same browser.
-The new deck separately saves your card position, explored cards, and theme.
-Demo controls in the new deck reset when you leave a card.
-
-Server/Suspense and native examples are clearly labeled educational models.
-No backend, account, API credentials, or cloud publishing is required.
+Keep the terminal running while learning. Ctrl+C stops it.

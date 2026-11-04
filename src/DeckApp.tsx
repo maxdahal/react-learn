@@ -1,4 +1,18 @@
-import { useEffect, useRef, useState } from "react";
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import AudioNarrator, { readAudioPreferences } from "./AudioNarrator";
+import ExploreActivity from "./ExploreActivity";
+import { missions } from "./missions";
+import { narration } from "./narration";
+import { readMissionProgress, missionStorageKey } from "./missionProgress";
+const CodeMission = lazy(() => import("./CodeMission"));
 import {
   ArrowDown,
   ArrowLeft,
@@ -20,6 +34,7 @@ import {
 } from "lucide-react";
 import MapLab, { Highlight } from "./App";
 import "./deck.css";
+import "./v5.css";
 export const deckStorageKey = "syntax-lab-deck-v3";
 export const deckLessons = [
   [
@@ -629,10 +644,12 @@ const tasks = [
 ];
 function Filtering() {
   const [filter, setFilter] = useState("All");
+  const [search, setSearch] = useState("");
   const visible = tasks.filter(
     (item) =>
-      filter === "All" ||
-      (filter === "Completed" ? item.isCompleted : !item.isCompleted),
+      (filter === "All" ||
+        (filter === "Completed" ? item.isCompleted : !item.isCompleted)) &&
+      item.name.toLowerCase().includes(search.toLowerCase()),
   );
   const expression =
     filter === "All"
@@ -643,9 +660,11 @@ function Filtering() {
   return (
     <Workbench
       code={
-        "const visible = items.filter(item =>\n  " +
+        "const search = " +
+        JSON.stringify(search) +
+        ";\nconst visible = items.filter(item =>\n  (" +
         expression +
-        "\n);\n\n// " +
+        ") && item.name.toLowerCase().includes(search.toLowerCase())\n);\n\n// " +
         visible.length +
         " of " +
         tasks.length +
@@ -653,12 +672,23 @@ function Filtering() {
       }
       file="filter.js"
       controls={
-        <Toggle
-          label="Task filter"
-          options={["All", "Active", "Completed"]}
-          value={filter}
-          onChange={setFilter}
-        />
+        <>
+          <label>
+            Search tasks
+            <input
+              aria-label="Filter search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Try prototype"
+            />
+          </label>
+          <Toggle
+            label="Task filter"
+            options={["All", "Active", "Completed"]}
+            value={filter}
+            onChange={setFilter}
+          />
+        </>
       }
     >
       <div className="d-filter-preview">
@@ -1425,10 +1455,46 @@ export default function DeckApp() {
   const [lab, setLab] = useState(false);
   const [saveError, setSaveError] = useState(false);
   const [finished, setFinished] = useState(false);
+  const [progress, setProgress] = useState(readMissionProgress);
+  const [audio, setAudio] = useState(readAudioPreferences);
+  const [solution, setSolution] = useState(false);
+  const [codeValid, setCodeValid] = useState(false);
+  const reducedMotion = useReducedMotion();
   const heading = useRef<HTMLHeadingElement>(null);
   const menuButton = useRef<HTMLButtonElement>(null);
   const menuPanel = useRef<HTMLElement>(null);
   const card = saved.card;
+  const task = progress.tasks[card] || 0;
+  const script = narration[audio.language][card];
+  const taskText = task === 0 ? script.explore : script.challenge;
+  const completion = Math.round(
+    ((progress.explored.length + progress.solved.length) / 32) * 100,
+  );
+  const exploreComplete = useCallback(
+    () =>
+      setProgress((old) =>
+        old.explored.includes(card)
+          ? old
+          : { ...old, explored: [...old.explored, card] },
+      ),
+    [card],
+  );
+  const codeComplete = useCallback(() => {
+    setCodeValid(true);
+    setProgress((old) =>
+      old.solved.includes(card)
+        ? old
+        : { ...old, solved: [...old.solved, card] },
+    );
+  }, [card]);
+  useEffect(() => {
+    try {
+      localStorage.setItem(missionStorageKey, JSON.stringify(progress));
+      localStorage.setItem("deep-dive-audio-v5", JSON.stringify(audio));
+    } catch {
+      setSaveError(true);
+    }
+  }, [progress, audio]);
   useEffect(() => {
     try {
       localStorage.setItem(deckStorageKey, JSON.stringify(saved));
@@ -1465,6 +1531,8 @@ export default function DeckApp() {
     setHelp(false);
     setMenu(false);
     setFinished(false);
+    setSolution(false);
+    setCodeValid(false);
     requestAnimationFrame(() =>
       heading.current?.focus({ preventScroll: true }),
     );
@@ -1475,7 +1543,24 @@ export default function DeckApp() {
         : "smooth",
     });
   }
+  function previous() {
+    if (task === 1) {
+      setProgress((p) => ({ ...p, tasks: { ...p.tasks, [card]: 0 } }));
+      setHelp(false);
+      setSolution(false);
+      setCodeValid(false);
+    } else if (card > 0) go(card - 1);
+  }
   function next() {
+    if (task === 0) {
+      if (!progress.explored.includes(card)) return;
+      setProgress((p) => ({ ...p, tasks: { ...p.tasks, [card]: 1 } }));
+      setHelp(false);
+      setSolution(false);
+      setCodeValid(false);
+      return;
+    }
+    if (!codeValid) return;
     setSaved((v) => ({
       ...v,
       completed: [...new Set([...v.completed, card])],
@@ -1483,6 +1568,36 @@ export default function DeckApp() {
     if (card < 15) go(card + 1);
     else setFinished(true);
   }
+  useEffect(() => {
+    const handle = (event: KeyboardEvent) => {
+      if (
+        lab ||
+        menu ||
+        event.altKey ||
+        event.ctrlKey ||
+        event.metaKey ||
+        event.shiftKey
+      )
+        return;
+      const target = event.target instanceof HTMLElement ? event.target : null;
+      if (
+        target?.closest(
+          'input, textarea, select, [contenteditable="true"], .monaco-editor',
+        )
+      )
+        return;
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        previous();
+      }
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        next();
+      }
+    };
+    window.addEventListener("keydown", handle);
+    return () => window.removeEventListener("keydown", handle);
+  }, [card, task, lab, menu, codeValid, progress.explored]);
   if (lab) return <MapLab onReturn={() => setLab(false)} />;
   return (
     <div
@@ -1503,9 +1618,11 @@ export default function DeckApp() {
           <span>
             <Braces size={22} />
           </span>
-          syntax<span>lab</span>
+          <span className="v5-brand">
+            React & JS <b>Deep Dive</b>
+          </span>
         </a>
-        <span className="d-product-name">JS to React: Step-by-Step</span>
+        <span className="d-product-name">Your guided audio lab</span>
         <div>
           <button
             className="d-icon-button"
@@ -1568,7 +1685,7 @@ export default function DeckApp() {
                     >
                       <span>{String(i + 1).padStart(2, "0")}</span>
                       {lesson[0]}
-                      {saved.completed.includes(i) ? (
+                      {progress.solved.includes(i) ? (
                         <Check size={13} />
                       ) : (
                         <ChevronRight size={13} />
@@ -1583,40 +1700,137 @@ export default function DeckApp() {
       <main className="d-main">
         <div className="d-progress-heading">
           <span>
-            <b>Card {card + 1}</b> of 16
+            <b>Card {card + 1}</b> of 16{" "}
+            <span className="v5-step-separator">•</span> Step {task + 1} of 2
           </span>
-          <span>
-            {card < 11 ? "01 / JAVASCRIPT FOUNDATIONS" : "02 / CORE REACT"}
-          </span>
+          <span>{completion}% COMPLETE</span>
         </div>
         <div
           className="d-progress-bar"
           role="progressbar"
-          aria-label="Card position"
-          aria-valuemin={1}
-          aria-valuemax={16}
-          aria-valuenow={card + 1}
+          aria-label="Overall mission completion"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={completion}
         >
-          <i style={{ width: ((card + 1) / 16) * 100 + "%" }} />
+          <i style={{ width: completion + "%" }} />
         </div>
-        <article id="deck-card" className="d-lesson-card" key={card}>
-          <div className="d-card-intro">
-            <div className="d-topic-label">
-              <span>{card < 11 ? "JS" : "R"}</span>
-              {deckLessons[card][0]}
+        <div className="v5-badges" aria-label="Achievements">
+          {progress.solved.length > 0 && (
+            <span>
+              <Check size={11} />
+              First mission
+            </span>
+          )}
+          {Array.from({ length: 11 }, (_, i) => i).every((i) =>
+            progress.solved.includes(i),
+          ) && <span>✳ JavaScript foundations</span>}
+          {[11, 12, 13, 14, 15].every((i) => progress.solved.includes(i)) && (
+            <span>✳ React foundations</span>
+          )}
+        </div>
+        <motion.article
+          id="deck-card"
+          className="d-lesson-card v5-card"
+          key={card + ":" + task}
+          initial={reducedMotion ? false : { opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <div className="v5-layout">
+            <div className="v5-guidance">
+              <div className="d-card-intro">
+                <div className="d-topic-label">
+                  <span>{card < 11 ? "JS" : "R"}</span>
+                  {deckLessons[card][0]}
+                </div>
+                <h1 ref={heading} tabIndex={-1}>
+                  {deckLessons[card][1]}
+                </h1>
+                <p lang={audio.language}>{script.concept}</p>
+              </div>
+              <div className="v5-task">
+                <span>
+                  STEP {task + 1} / {task === 0 ? "EXPLORE" : "CODE"}
+                </span>
+                <p lang={audio.language}>{taskText}</p>
+              </div>
+              <AudioNarrator
+                text={script.concept + " " + taskText}
+                preferences={audio}
+                onChange={setAudio}
+                lessonKey={card + ":" + task}
+              />
             </div>
-            <h1 ref={heading} tabIndex={-1}>
-              {deckLessons[card][1]}
-            </h1>
-            <p>{deckLessons[card][2]}</p>
+            <div className="v5-workspace">
+              {task === 0 ? (
+                <>
+                  <ExploreActivity
+                    key={card}
+                    index={card}
+                    onComplete={exploreComplete}
+                  >
+                    <LessonContent index={card} openLab={() => setLab(true)} />
+                  </ExploreActivity>
+                  <div
+                    className={
+                      "v5-explore-result " +
+                      (progress.explored.includes(card) ? "complete" : "")
+                    }
+                    role="status"
+                  >
+                    {progress.explored.includes(card) ? (
+                      <>
+                        <Check size={16} />
+                        Exploration complete. Try the code mission next.
+                      </>
+                    ) : (
+                      <>
+                        Follow the task above. Your changes are checked
+                        automatically.
+                      </>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <Suspense
+                  fallback={
+                    <div className="micro-editor-loading">
+                      Loading local editor…
+                    </div>
+                  }
+                >
+                  <CodeMission
+                    index={card}
+                    drafts={progress.drafts[card]}
+                    onChange={(files) => {
+                      setCodeValid(false);
+                      setProgress((p) => ({
+                        ...p,
+                        drafts: { ...p.drafts, [card]: files },
+                      }));
+                    }}
+                    onSolved={codeComplete}
+                    onValidity={setCodeValid}
+                    theme={saved.theme}
+                  />
+                </Suspense>
+              )}
+            </div>
           </div>
-          <LessonContent index={card} openLab={() => setLab(true)} />
           <div className="d-card-help">
             <button
               className="d-help-button"
               aria-expanded={help}
               aria-controls="deck-help"
-              onClick={() => setHelp(!help)}
+              onClick={() => {
+                setHelp(!help);
+                if (!help && task === 1 && !progress.hints[card])
+                  setProgress((p) => ({
+                    ...p,
+                    hints: { ...p.hints, [card]: 1 },
+                  }));
+              }}
             >
               <Lightbulb size={15} />
               {help ? "Hide explanation" : "I'm confused"}
@@ -1624,8 +1838,45 @@ export default function DeckApp() {
             </button>
             {help && (
               <p id="deck-help" className="d-help-text">
-                {deckLessons[card][3]}
+                {task === 0
+                  ? deckLessons[card][3]
+                  : missions[card].hints[
+                      Math.max(0, (progress.hints[card] || 1) - 1)
+                    ]}
               </p>
+            )}
+            {help && task === 1 && (
+              <div className="v5-more-help">
+                {(progress.hints[card] || 1) < 3 ? (
+                  <button
+                    className="d-link"
+                    onClick={() =>
+                      setProgress((p) => ({
+                        ...p,
+                        hints: {
+                          ...p.hints,
+                          [card]: Math.min(3, (p.hints[card] || 1) + 1),
+                        },
+                      }))
+                    }
+                  >
+                    Another hint
+                    <ArrowRight size={13} />
+                  </button>
+                ) : (
+                  <button
+                    className="d-link"
+                    onClick={() => setSolution(!solution)}
+                  >
+                    {solution ? "Hide" : "Compare a"} worked solution
+                  </button>
+                )}
+                {solution && (
+                  <pre>
+                    <Highlight code={missions[card].solution} />
+                  </pre>
+                )}
+              </div>
             )}
           </div>
           {finished && (
@@ -1637,38 +1888,49 @@ export default function DeckApp() {
               </span>
             </div>
           )}
-        </article>
+        </motion.article>
         <footer className="d-bottom-nav">
           <button
             className="d-previous"
-            disabled={card === 0}
-            onClick={() => go(card - 1)}
+            disabled={card === 0 && task === 0}
+            onClick={previous}
           >
             <ArrowLeft size={16} />
             Previous
           </button>
           <span>
             {saveError
-              ? "Local saving unavailable. Keep this tab open."
-              : saved.completed.includes(card)
-                ? "Explored · you can revisit anytime"
-                : "Your place is saved on this device."}
+              ? "Local saving unavailable."
+              : task === 0
+                ? progress.explored.includes(card)
+                  ? "Ready for the code mission."
+                  : "Complete the exploration to continue."
+                : codeValid
+                  ? "Code mission complete."
+                  : "Edit your code and test the preview to continue."}
           </span>
           <button
             className="d-next"
+            disabled={
+              !finished &&
+              (task === 0 ? !progress.explored.includes(card) : !codeValid)
+            }
             onClick={() => (finished ? go(0) : next())}
           >
-            {card === 15
-              ? finished
-                ? "Explore again"
-                : "Finish deck"
-              : "Next"}
+            {finished
+              ? "Explore again"
+              : task === 0
+                ? "Next task"
+                : card === 15
+                  ? "Finish deck"
+                  : "Next card"}
             <ArrowRight size={16} />
           </button>
         </footer>
       </main>
       <div className="d-footer-note">
-        One concept. One small experiment. Your own pace.
+        One concept. Two small missions. Listen, change, understand. ← Previous
+        · Next →
       </div>
     </div>
   );

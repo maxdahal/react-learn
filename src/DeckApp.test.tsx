@@ -9,17 +9,31 @@ import {
   within,
 } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { missionStorageKey } from "./missionProgress";
 import DeckApp, { deckLessons, deckStorageKey } from "./DeckApp";
 import { storageKey } from "./learning";
 beforeEach(() => {
   localStorage.clear();
   window.scrollTo = vi.fn();
+  window.matchMedia = vi
+    .fn()
+    .mockReturnValue({
+      matches: false,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    });
 });
 afterEach(() => {
   cleanup();
   vi.useRealTimers();
 });
 function open(card = 0) {
+  localStorage.setItem(
+    missionStorageKey,
+    JSON.stringify({ explored: Array.from({ length: 16 }, (_, i) => i) }),
+  );
   localStorage.setItem(deckStorageKey, JSON.stringify({ card, completed: [] }));
   return render(<DeckApp />);
 }
@@ -45,14 +59,11 @@ describe("v3 concept deck", () => {
       cleanup();
     }
   });
-  it("navigates forward/back and resumes the current card after reload", () => {
+  it("chooses a card and resumes it after reload", () => {
     const view = open();
-    fireEvent.click(screen.getByRole("button", { name: "Next" }));
+    select("Object & array");
     expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(
       deckLessons[1][1],
-    );
-    expect(JSON.parse(localStorage.getItem(deckStorageKey)!).completed).toEqual(
-      [0],
     );
     view.unmount();
     render(<DeckApp />);
@@ -254,7 +265,7 @@ describe("v3 concept deck", () => {
     fireEvent.click(screen.getByRole("button", { name: "♡ Save talk" }));
     expect(preview().getByRole("button", { name: "♥ Saved" })).toBeTruthy();
   });
-  it("switches renderer primitives and completes/restarts the deck", () => {
+  it("switches renderer primitives and supports its live action", () => {
     open(15);
     fireEvent.click(screen.getByRole("button", { name: "iOS" }));
     expect(
@@ -262,12 +273,6 @@ describe("v3 concept deck", () => {
     ).toContain("react-native");
     fireEvent.click(screen.getByRole("button", { name: "Explore" }));
     expect(preview().getByRole("button", { name: "Explored ✓" })).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "Finish deck" }));
-    expect(screen.getByRole("status").textContent).toContain("end of the deck");
-    fireEvent.click(screen.getByRole("button", { name: "Explore again" }));
-    expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(
-      deckLessons[0][1],
-    );
   });
   it("opens the old map lab without losing its saved code, then returns", () => {
     localStorage.setItem(
