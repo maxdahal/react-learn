@@ -1,11 +1,11 @@
 {
-  "arrow": "const repair = () => {};",
-  "parameters": "const Survivor = ({ title, isInjured }) => {};",
+  "arrow": "const Repair = () => {};",
+  "parameters": "const Perk = ({ perkName }) => {};",
   "state-pair": "const [item, setItem] = useState('Medkit');",
   "spread": "[...inventory, 'Medkit']",
   "rest": "const pack = (...items) => items;",
   "template": "`survivor-${id}`",
-  "map": "survivors.map(name => <SurvivorHUD name={name} />)",
+  "map": "survivors.map(s => <li>{s.name}</li>)",
   "filter": "survivors.filter(s => s.isInjured)",
   "flat-map": "chests.flatMap(c => c.items)",
   "reduce": "chests.reduce((total, chest) => total + chest.items.length, 0)",
@@ -15,10 +15,11 @@
   "module-import": "import { openExitGate } from './gate';",
   "await": "const escape = async () => { await openExitGate(); };",
   "module-export": "export default escape;",
-  "composition": "<SurvivorHUD><PerkIcon /></SurvivorHUD>",
+  "composition": "<VideoList><Thumbnail /><LikeButton /></VideoList>",
   "key": "key={survivor.id}",
-  "state-hook": "const [repairProgress, setRepairProgress] = useState(0);",
-  "suspense": "<Suspense fallback={<LoadingSpinner />}><MatchStats /></Suspense>",
+  "state-hook": "const [progress, setProgress] = useState(0);",
+  "suspense": "<Suspense fallback={<BloodwebSpinner />}><MatchStats /></Suspense>",
   "client-directive": "'use client';",
-  "streaming": "renderToPipeableStream(<App />)"
+  "streaming": "renderToPipeableStream(<App />)",
+  "find": "survivors.find(s => s.isInjured)"
 }

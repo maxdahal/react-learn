@@ -472,3 +472,215 @@ h1 {
     scroll-behavior: auto !important;
   }
 }
+
+.zen-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.zen-icon-button {
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid #526575;
+  border-radius: 12px;
+  background: transparent;
+  color: #c5dfdd;
+}
+.zen-icon-button:hover {
+  background: #2a3c4c;
+}
+.zen-tip {
+  margin: 0 0 30px;
+}
+.zen-tip-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  color: #89dfcf;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  margin-bottom: 14px;
+}
+.zen-concept {
+  margin: 0;
+  color: #e0eaf0;
+  font-size: 20px;
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+.zen-tip + h1 {
+  margin-top: 0;
+}
+.zen-select {
+  min-height: 78px;
+  font-family: inherit;
+  font-size: 20px;
+  height: auto;
+  text-overflow: ellipsis;
+  padding-right: 14px;
+}
+.zen-select:disabled {
+  opacity: 1;
+  color: #c1ece0;
+  border-color: #5b938b;
+}
+.zen-drawer {
+  position: fixed;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  border: 0;
+  background: transparent;
+  color: #f8fafc;
+}
+.zen-drawer[open] {
+  display: flex;
+  justify-content: flex-end;
+}
+.zen-drawer::backdrop {
+  background: #070e1ccc;
+}
+.zen-drawer-panel {
+  width: min(460px, 100%);
+  height: 100%;
+  background: #172438;
+  border-left: 1px solid #3d5361;
+  overflow-y: auto;
+  padding: 28px;
+  overscroll-behavior: contain;
+  animation: zen-drawer-in 0.18s ease;
+}
+.zen-drawer-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.zen-drawer-heading h2 {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.4;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+.zen-drawer-intro {
+  margin: 18px 0 28px;
+  color: #b8cbd6;
+  font-size: 16px;
+  line-height: 1.7;
+}
+.zen-drawer-phase + .zen-drawer-phase {
+  margin-top: 32px;
+}
+.zen-drawer-phase h3 {
+  margin: 0 0 20px;
+}
+.zen-phase-link {
+  border: 0;
+  border-bottom: 1px solid #3d5862;
+  padding: 12px 0;
+  background: transparent;
+  color: #a5e6da;
+  text-align: left;
+  width: 100%;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.7;
+}
+.zen-phase-link span {
+  display: block;
+  color: #b1c9ce;
+  font-size: 12px;
+  font-weight: 400;
+}
+.zen-drawer-generators,
+.zen-drawer-generators ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.zen-drawer-generators > li + li {
+  margin-top: 24px;
+}
+.zen-drawer-generators h4 {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  font-size: 13px;
+  color: #b9cbd9;
+  font-weight: 500;
+  line-height: 1.7;
+  margin: 0 0 6px;
+}
+.zen-drawer-generators h4 > span {
+  color: #88aaa9;
+  font-variant-numeric: tabular-nums;
+}
+.zen-drawer-generators li button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: 10px;
+  color: #e4edf3;
+  padding: 12px 14px;
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 48px;
+}
+.zen-drawer-generators li button:hover {
+  background: #263b4e;
+}
+.zen-drawer-generators li button[aria-current="step"] {
+  border-color: #51968a;
+  background: #25423f;
+  color: #d9f8ee;
+}
+.zen-drawer-generators button > svg {
+  color: #8dddd0;
+  flex-shrink: 0;
+}
+@keyframes zen-drawer-in {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@media (max-width: 640px) {
+  .zen-header-actions {
+    gap: 10px;
+  }
+  .zen-card {
+    padding-top: 26px;
+  }
+  .zen-eyebrow {
+    margin-bottom: 12px;
+  }
+  .zen-tip {
+    margin-bottom: 24px;
+  }
+  .zen-drawer-panel {
+    padding: 22px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .zen-drawer-panel {
+    animation: none;
+  }
+}

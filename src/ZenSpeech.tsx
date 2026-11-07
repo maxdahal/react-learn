@@ -5,9 +5,11 @@ type SpeechState = "idle" | "playing" | "paused" | "ended";
 export default function ZenSpeech({
   text,
   onNotice,
+  suspend = false,
 }: {
   text: string;
   onNotice: (notice: string) => void;
+  suspend?: boolean;
 }) {
   const [state, setState] = useState<SpeechState>("idle");
   const generation = useRef(0);
@@ -22,9 +24,10 @@ export default function ZenSpeech({
       generation.current++;
       window.speechSynthesis?.cancel();
     };
-  }, [text]);
+  }, [text, suspend]);
 
   function activate() {
+    if (suspend) return;
     const synth = window.speechSynthesis;
     if (!synth || typeof SpeechSynthesisUtterance === "undefined") {
       onNotice(

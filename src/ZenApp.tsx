@@ -6,6 +6,7 @@ import {
   type Dispatch,
   type FormEvent,
   type SetStateAction,
+  type RefObject,
 } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
@@ -15,9 +16,11 @@ import {
   BellOff,
   Check,
   Leaf,
+  Menu,
   Sparkles,
 } from "lucide-react";
 import ZenSpeech from "./ZenSpeech";
+import ZenDrawer from "./ZenDrawer";
 import useZenChime from "./useZenChime";
 import {
   allGeneratorsComplete,
@@ -37,10 +40,14 @@ function GeneratorCard({
   progress,
   setProgress,
   chime,
+  menuOpen,
+  activeMission,
 }: {
   progress: ZenProgress;
   setProgress: ProgressSetter;
   chime: () => void;
+  menuOpen: boolean;
+  activeMission: RefObject<string>;
 }) {
   const { generator, mission } = progress;
   const group = zenGenerators[generator];
@@ -51,8 +58,19 @@ function GeneratorCard({
   const [justSolved, setJustSolved] = useState(false);
   const input = useRef<HTMLTextAreaElement>(null);
   const primary = useRef<HTMLButtonElement>(null);
+  const choice = useRef<HTMLSelectElement>(null);
   const checking = useRef(false);
   const value = progress.answers[task.id] ?? task.starter ?? "";
+  const latestValue = useRef(value);
+  latestValue.current = value;
+  const mounted = useRef(true);
+  useEffect(() => {
+    mounted.current = true;
+    window.scrollTo({ top: 0, behavior: "auto" });
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
   const hint = hintLevel
     ? task.hints[Math.min(hintLevel - 1, task.hints.length - 1)]
     : "";
@@ -69,7 +87,9 @@ function GeneratorCard({
 
   useEffect(() => {
     if (solved || !input.current) {
-      primary.current?.focus({ preventScroll: true });
+      if (!solved && choice.current)
+        choice.current.focus({ preventScroll: true });
+      else primary.current?.focus({ preventScroll: true });
       return;
     }
     const field = input.current;
@@ -149,13 +169,24 @@ function GeneratorCard({
     }
     checking.current = true;
     try {
+      const validator =
+        task.kind === "code" ? await import("./zenValidation") : null;
+      if (
+        !mounted.current ||
+        activeMission.current !== task.id ||
+        latestValue.current !== value
+      )
+        return;
       const correct =
         task.kind === "code"
-          ? (await import("./zenValidation")).checkZenAnswer(task.id, value)
-          : task.kind === "principle" || progress.nativeSeen;
+          ? validator!.checkZenAnswer(task.id, value)
+          : task.kind === "choice"
+            ? value === task.correctChoice
+            : task.kind === "principle" || progress.nativeSeen;
       if (correct) earnMission();
       else setHintLevel((level) => level + 1);
     } catch {
+      if (!mounted.current || activeMission.current !== task.id) return;
       setNotice(
         "The answer checker couldn’t load. Your draft is safe; try Next again when you’re ready.",
       );
@@ -175,14 +206,23 @@ function GeneratorCard({
           </span>
         )}
       </div>
-      <div className="zen-question-row">
-        <h1 id="zen-question">{task.question}</h1>
-        <ZenSpeech
-          text={`${task.question} ${task.description}`}
-          onNotice={setNotice}
-        />
-      </div>
-      <p className="zen-description">{task.description}</p>
+      <section className="zen-tip" aria-labelledby="zen-tip-label">
+        <div className="zen-tip-heading">
+          <span id="zen-tip-label">Tip & concept</span>
+          <ZenSpeech
+            text={`${task.concept.join(" ")} ${task.question} ${task.description}`}
+            suspend={menuOpen}
+            onNotice={setNotice}
+          />
+        </div>
+        <p id="zen-concept" className="zen-concept">
+          {task.concept.join(" ")}
+        </p>
+      </section>
+      <h1 id="zen-question">{task.question}</h1>
+      <p id="zen-instruction" className="zen-description">
+        {task.description}
+      </p>
       {task.context && <code className="zen-context">{task.context}</code>}
       <form onSubmit={submit} className="zen-form">
         {task.kind === "code" && (
@@ -192,7 +232,7 @@ function GeneratorCard({
             className="zen-input"
             aria-label="Your code"
             value={value}
-            aria-describedby={hint ? "zen-hint" : undefined}
+            aria-describedby={`zen-concept zen-instruction${hint ? " zen-hint" : ""}`}
             readOnly={solved}
             onKeyDown={(event) => {
               if (
@@ -218,6 +258,30 @@ function GeneratorCard({
             }}
           />
         )}
+        {task.kind === "choice" && (
+          <select
+            ref={choice}
+            className="zen-input zen-select"
+            aria-label="RSC data fetching pattern"
+            aria-describedby={`zen-concept zen-instruction${hint ? " zen-hint" : ""}`}
+            value={value}
+            disabled={solved}
+            onChange={(event) => {
+              const answer = event.target.value;
+              setProgress((previous) => ({
+                ...previous,
+                answers: { ...previous.answers, [task.id]: answer },
+              }));
+            }}
+          >
+            <option value="">Choose a pattern…</option>
+            {task.choices?.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        )}
         {task.kind === "platform" && (
           <button
             type="button"
@@ -236,7 +300,9 @@ function GeneratorCard({
           >
             <span>
               <span className="zen-platform-name">
-                {progress.platform === "web" ? "Web" : "Native"}
+                {progress.platform === "web"
+                  ? "Web (DOM)"
+                  : "Mobile Native View"}
               </span>
               <span className="zen-platform-detail">
                 {progress.platform === "web"
@@ -334,9 +400,17 @@ function GeneratorCard({
   );
 }
 
-function Completion({ onReturn }: { onReturn: () => void }) {
+function Completion({
+  onReturn,
+  menuOpen,
+}: {
+  onReturn: () => void;
+  menuOpen: boolean;
+}) {
   const [notice, setNotice] = useState("");
   const heading = "The Fog clears.";
+  const concept =
+    "Small practice steps build familiarity over time. Revisiting a concept helps you use it more independently.";
   const description =
     "All 16 generators are repaired, and the Exit Gate is open. Your work is here whenever you want to return.";
   return (
@@ -347,10 +421,20 @@ function Completion({ onReturn }: { onReturn: () => void }) {
       <div className="zen-complete-icon">
         <Leaf size={26} aria-hidden="true" />
       </div>
-      <div className="zen-question-row">
-        <h1 id="zen-finish">{heading}</h1>
-        <ZenSpeech text={`${heading} ${description}`} onNotice={setNotice} />
-      </div>
+      <section className="zen-tip" aria-labelledby="zen-tip-label">
+        <div className="zen-tip-heading">
+          <span id="zen-tip-label">Tip & concept</span>
+          <ZenSpeech
+            text={`${concept} ${heading} ${description}`}
+            suspend={menuOpen}
+            onNotice={setNotice}
+          />
+        </div>
+        <p id="zen-concept" className="zen-concept">
+          {concept}
+        </p>
+      </section>
+      <h1 id="zen-finish">{heading}</h1>
       <p className="zen-description">{description}</p>
       {notice && (
         <p className="zen-notice" role="status">
@@ -372,6 +456,11 @@ function Completion({ onReturn }: { onReturn: () => void }) {
 export default function ZenApp() {
   const [progress, setProgress] = useState(readZenProgress);
   const [saving, setSaving] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const activeMission = useRef("");
+  activeMission.current = progress.escaped
+    ? "complete"
+    : zenGenerators[progress.generator].missions[progress.mission].id;
   const reducedMotion = useReducedMotion();
   const chime = useZenChime(progress.sound);
   const repaired = zenGenerators.filter((generator) =>
@@ -387,36 +476,53 @@ export default function ZenApp() {
   }, [progress]);
   useEffect(() => {
     document.documentElement.lang = "en";
-    document.title = "Zen Fog: JS to React";
+    document.title = "React & JS Zen Fog";
   }, []);
 
   return (
     <div className="zen-shell min-h-svh bg-slate-900 text-slate-50">
       <header className="zen-header">
-        <a className="zen-brand" href="#main" aria-label="Zen Fog: JS to React">
+        <a className="zen-brand" href="#main" aria-label="React & JS Zen Fog">
           <Leaf size={22} aria-hidden="true" />
           <span>
-            Zen Fog<span className="zen-subtitle">JS to React</span>
+            Zen Fog<span className="zen-subtitle">React & JS</span>
           </span>
         </a>
-        <button
-          type="button"
-          className="zen-sound"
-          aria-label={
-            progress.sound ? "Mute completion sound" : "Enable completion sound"
-          }
-          aria-pressed={progress.sound}
-          onClick={() =>
-            setProgress((previous) => ({ ...previous, sound: !previous.sound }))
-          }
-        >
-          {progress.sound ? (
-            <Bell size={18} aria-hidden="true" />
-          ) : (
-            <BellOff size={18} aria-hidden="true" />
-          )}
-          <span>Sound {progress.sound ? "on" : "off"}</span>
-        </button>
+        <div className="zen-header-actions">
+          <button
+            type="button"
+            className="zen-sound"
+            aria-label={
+              progress.sound
+                ? "Mute completion sound"
+                : "Enable completion sound"
+            }
+            aria-pressed={progress.sound}
+            onClick={() =>
+              setProgress((previous) => ({
+                ...previous,
+                sound: !previous.sound,
+              }))
+            }
+          >
+            {progress.sound ? (
+              <Bell size={18} aria-hidden="true" />
+            ) : (
+              <BellOff size={18} aria-hidden="true" />
+            )}
+            <span>Sound {progress.sound ? "on" : "off"}</span>
+          </button>
+          <button
+            type="button"
+            className="zen-icon-button"
+            aria-label="Open lesson menu"
+            aria-expanded={menuOpen}
+            aria-controls="zen-drawer"
+            onClick={() => setMenuOpen(true)}
+          >
+            <Menu size={22} aria-hidden="true" />
+          </button>
+        </div>
       </header>
       <main id="main" className="zen-main">
         <div className="zen-step-line">
@@ -443,6 +549,7 @@ export default function ZenApp() {
           >
             {progress.escaped ? (
               <Completion
+                menuOpen={menuOpen}
                 onReturn={() =>
                   setProgress((previous) => ({
                     ...previous,
@@ -457,6 +564,8 @@ export default function ZenApp() {
                 progress={progress}
                 setProgress={setProgress}
                 chime={chime}
+                menuOpen={menuOpen}
+                activeMission={activeMission}
               />
             )}
           </motion.div>
@@ -470,6 +579,23 @@ export default function ZenApp() {
           {repaired} of 16 generators repaired
         </span>
       </main>
+      {menuOpen && (
+        <ZenDrawer
+          generator={progress.generator}
+          mission={progress.mission}
+          solved={progress.solved}
+          onClose={() => setMenuOpen(false)}
+          onSelect={(generator, mission) => {
+            setProgress((previous) => ({
+              ...previous,
+              generator,
+              mission,
+              escaped: false,
+            }));
+            setMenuOpen(false);
+          }}
+        />
+      )}
     </div>
   );
 }

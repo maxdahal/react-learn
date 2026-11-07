@@ -25,6 +25,7 @@ vi.mock("./useZenChime", () => ({
 beforeEach(() => {
   localStorage.clear();
   vi.clearAllMocks();
+  window.scrollTo = vi.fn();
   window.matchMedia = vi.fn().mockReturnValue({
     matches: true,
     addListener: vi.fn(),
@@ -36,6 +37,7 @@ beforeEach(() => {
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
+  vi.unstubAllGlobals();
 });
 function seed(generator: number, mission = 0, extra = {}) {
   localStorage.setItem(
@@ -62,7 +64,7 @@ describe("cognitively accessible master flow", () => {
     render(<ZenApp />);
     expect(screen.getAllByRole("textbox")).toHaveLength(1);
     expect((screen.getByRole("textbox") as HTMLTextAreaElement).value).toBe(
-      "const repair = ",
+      "const Repair = ",
     );
     expect(screen.getAllByRole("article")).toHaveLength(1);
     expect(screen.queryByRole("navigation")).toBeNull();
@@ -78,7 +80,7 @@ describe("cognitively accessible master flow", () => {
   it("reveals progressive mint hints without erasing a draft or playing a failure sound", async () => {
     render(<ZenApp />);
     fireEvent.change(screen.getByRole("textbox"), {
-      target: { value: "const repair = function() {}" },
+      target: { value: "const Repair = function() {}" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Next" }));
     expect(await screen.findByText(zenMissions[0].hints[0])).toBeTruthy();
@@ -86,7 +88,7 @@ describe("cognitively accessible master flow", () => {
     expect(await screen.findByText(zenMissions[0].hints[1])).toBeTruthy();
     expect(readZenProgress().solved).toEqual([]);
     expect((screen.getByRole("textbox") as HTMLTextAreaElement).value).toBe(
-      "const repair = function() {}",
+      "const Repair = function() {}",
     );
     expect(screen.queryByRole("alert")).toBeNull();
     expect(audio.chime).not.toHaveBeenCalled();
@@ -110,7 +112,7 @@ describe("cognitively accessible master flow", () => {
     expect(field.value.slice(field.selectionStart!, field.selectionEnd!)).toBe(
       "_____",
     );
-    await user.keyboard("{{ title, isInjured }{Enter}");
+    await user.keyboard("{{ perkName }{Enter}");
     await waitFor(() =>
       expect(readZenProgress().solved).toContain("parameters"),
     );
@@ -188,6 +190,11 @@ describe("cognitively accessible master flow", () => {
           );
           expect(screen.getByText("<View />")).toBeTruthy();
           fireEvent.click(screen.getByRole("button", { name: "Next" }));
+        } else if (task.kind === "choice") {
+          fireEvent.change(screen.getByRole("combobox"), {
+            target: { value: "server" },
+          });
+          fireEvent.click(screen.getByRole("button", { name: "Next" }));
         } else
           fireEvent.click(
             screen.getByRole("button", { name: task.actionLabel }),
@@ -198,7 +205,7 @@ describe("cognitively accessible master flow", () => {
         expect(readZenProgress().escaped).toBe(false);
         fireEvent.click(
           screen.getByRole("button", {
-            name: task.id === "compiler" ? "Open Exit Gate" : "Next",
+            name: task.id === "rsc-pattern" ? "Open Exit Gate" : "Next",
           }),
         );
       }
@@ -207,23 +214,22 @@ describe("cognitively accessible master flow", () => {
       await screen.findByRole("heading", { name: /The Fog clears/ }),
     ).toBeTruthy();
     expect(readZenProgress().escaped).toBe(true);
-    expect(readZenProgress().solved).toHaveLength(25);
+    expect(readZenProgress().solved).toHaveLength(27);
     expect(screen.getByRole("button", { name: "Play narration" })).toBeTruthy();
-    expect(audio.chime).toHaveBeenCalledTimes(25);
+    expect(audio.chime).toHaveBeenCalledTimes(27);
     fireEvent.click(
       screen.getByRole("button", { name: "Return to generator 1" }),
     );
     await at(0);
-    expect(readZenProgress().solved).toHaveLength(25);
+    expect(readZenProgress().solved).toHaveLength(27);
   });
   it("cannot open the exit with incomplete saved work", async () => {
-    seed(15, 2);
+    seed(15, 3);
     render(<ZenApp />);
-    fireEvent.click(
-      screen.getByRole("button", {
-        name: "Reuse eligible calculations and component work",
-      }),
-    );
+    fireEvent.change(screen.getByRole("combobox"), {
+      target: { value: "server" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Next" }));
     fireEvent.click(screen.getByRole("button", { name: "Continue repairing" }));
     await at(0);
     expect(readZenProgress().escaped).toBe(false);
@@ -260,11 +266,114 @@ describe("cognitively accessible master flow", () => {
     });
     expect(readZenProgress()).toMatchObject({
       generator: 15,
-      mission: 2,
+      mission: 3,
       solved: ["arrow"],
       escaped: false,
       repairProgress: 0,
       answers: { parameters: "draft" },
     });
+  });
+});
+
+describe("tips and the hidden Zen Drawer", () => {
+  it("shows a short concept before every question and describes the field with it", async () => {
+    render(<ZenApp />);
+    for (let generator = 0; generator < zenGenerators.length; generator++) {
+      for (
+        let mission = 0;
+        mission < zenGenerators[generator].missions.length;
+        mission++
+      ) {
+        const task = zenGenerators[generator].missions[mission];
+        expect(task.concept.length).toBeGreaterThanOrEqual(2);
+        expect(task.concept.length).toBeLessThanOrEqual(3);
+        fireEvent.click(
+          screen.getByRole("button", { name: "Open lesson menu" }),
+        );
+        fireEvent.click(screen.getByRole("button", { name: task.question }));
+        await at(generator, mission);
+        const concept = screen.getByText(task.concept.join(" "));
+        const question = screen.getByRole("heading", { level: 1 });
+        expect(
+          concept.compareDocumentPosition(question) &
+            Node.DOCUMENT_POSITION_FOLLOWING,
+        ).toBeTruthy();
+        const field =
+          screen.queryByRole("textbox") ?? screen.queryByRole("combobox");
+        if (field)
+          expect(field.getAttribute("aria-describedby")).toContain(
+            "zen-concept",
+          );
+        expect(screen.queryByRole("dialog")).toBeNull();
+        expect(screen.getAllByRole("article")).toHaveLength(1);
+      }
+    }
+  });
+  it("traps drawer focus, closes with Escape, and returns focus to its trigger", async () => {
+    const user = userEvent.setup();
+    render(<ZenApp />);
+    expect(screen.queryByRole("dialog")).toBeNull();
+    const trigger = screen.getByRole("button", { name: "Open lesson menu" });
+    await user.click(trigger);
+    const close = screen.getByRole("button", { name: "Close lesson menu" });
+    expect(document.activeElement).toBe(close);
+    expect(trigger.getAttribute("aria-expanded")).toBe("true");
+    await user.keyboard("{Shift>}{Tab}{/Shift}");
+    expect(document.activeElement?.textContent).toContain(
+      zenMissions.at(-1)!.question,
+    );
+    await user.keyboard("{Tab}");
+    expect(document.activeElement).toBe(close);
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(document.activeElement).toBe(trigger);
+    expect(document.body.style.overflow).toBe("");
+  });
+  it("jumps to either phase and closes from its backdrop without losing a draft", async () => {
+    render(<ZenApp />);
+    fireEvent.change(screen.getByRole("textbox"), {
+      target: { value: "draft to keep" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Open lesson menu" }));
+    fireEvent.click(screen.getByRole("button", { name: /Part 2 · React/ }));
+    await at(10);
+    fireEvent.click(screen.getByRole("button", { name: "Open lesson menu" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: /Part 1 · JavaScript/ }),
+    );
+    await at(0);
+    expect((screen.getByRole("textbox") as HTMLTextAreaElement).value).toBe(
+      "draft to keep",
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Open lesson menu" }));
+    fireEvent.click(screen.getByRole("dialog"));
+    expect(screen.queryByRole("dialog")).toBeNull();
+  });
+  it("leaves RSC client answers as drafts and offers a hint until the server pattern is chosen", async () => {
+    seed(15, 3, { nativeSeen: true });
+    render(<ZenApp />);
+    const field = screen.getByRole("combobox");
+    fireEvent.change(field, { target: { value: "effect" } });
+    fireEvent.click(screen.getByRole("button", { name: "Next" }));
+    expect(await screen.findByText(zenMissions.at(-1)!.hints[0])).toBeTruthy();
+    expect(readZenProgress().answers["rsc-pattern"]).toBe("effect");
+    expect(readZenProgress().solved).not.toContain("rsc-pattern");
+    fireEvent.change(field, { target: { value: "server" } });
+    fireEvent.click(screen.getByRole("button", { name: "Next" }));
+    await waitFor(() =>
+      expect(readZenProgress().solved).toContain("rsc-pattern"),
+    );
+  });
+  it("ignores a pending code check if the learner jumps to another card", async () => {
+    render(<ZenApp />);
+    fireEvent.change(screen.getByRole("textbox"), {
+      target: { value: answers.arrow },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Next" }));
+    fireEvent.click(screen.getByRole("button", { name: "Open lesson menu" }));
+    fireEvent.click(screen.getByRole("button", { name: /Part 2 · React/ }));
+    await at(10);
+    expect(readZenProgress().solved).not.toContain("arrow");
+    expect(audio.chime).not.toHaveBeenCalled();
   });
 });

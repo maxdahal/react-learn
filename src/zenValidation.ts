@@ -110,7 +110,7 @@ export function checkZenAnswer(mission: string, source: string): boolean {
   try {
     switch (mission) {
       case "arrow": {
-        const fn = declaration(source, "repair");
+        const fn = declaration(source, "Repair");
         return (
           fn?.type === "ArrowFunctionExpression" &&
           !fn.async &&
@@ -119,7 +119,7 @@ export function checkZenAnswer(mission: string, source: string): boolean {
         );
       }
       case "parameters": {
-        const fn = declaration(source, "Survivor");
+        const fn = declaration(source, "Perk");
         if (
           fn?.type !== "ArrowFunctionExpression" ||
           fn.params.length !== 1 ||
@@ -127,7 +127,7 @@ export function checkZenAnswer(mission: string, source: string): boolean {
         )
           return false;
         const properties = fn.params[0].properties;
-        return ["title", "isInjured"].every((name) =>
+        return ["perkName"].every((name) =>
           properties.some(
             (p) =>
               p.type === "ObjectProperty" &&
@@ -183,22 +183,21 @@ export function checkZenAnswer(mission: string, source: string): boolean {
         const name = fn.params[0].name;
         return (
           result?.type === "JSXElement" &&
-          jsxName(result.openingElement, "SurvivorHUD") &&
-          result.openingElement.attributes.some(
-            (attribute) =>
-              attribute.type === "JSXAttribute" &&
-              attribute.name.name === "name" &&
-              attribute.value?.type === "JSXExpressionContainer" &&
-              identifier(attribute.value.expression, name),
+          jsxName(result.openingElement, "li") &&
+          result.children.some(
+            (child) =>
+              child.type === "JSXExpressionContainer" &&
+              property(child.expression, name, "name"),
           )
         );
       }
       case "filter":
+      case "find":
       case "flat-map": {
         const call = methodCall(
           source,
-          mission === "filter" ? "survivors" : "chests",
-          mission === "filter" ? "filter" : "flatMap",
+          mission !== "flat-map" ? "survivors" : "chests",
+          mission === "flat-map" ? "flatMap" : mission,
         );
         const fn = callback(call?.arguments[0]);
         return (
@@ -208,7 +207,7 @@ export function checkZenAnswer(mission: string, source: string): boolean {
           property(
             returned(fn),
             fn.params[0].name,
-            mission === "filter" ? "isInjured" : "items",
+            mission !== "flat-map" ? "isInjured" : "items",
           )
         );
       }
@@ -335,11 +334,13 @@ export function checkZenAnswer(mission: string, source: string): boolean {
         const e = expression(source);
         return (
           e.type === "JSXElement" &&
-          jsxName(e.openingElement, "SurvivorHUD") &&
-          e.children.some(
-            (child) =>
-              child.type === "JSXElement" &&
-              jsxName(child.openingElement, "PerkIcon"),
+          jsxName(e.openingElement, "VideoList") &&
+          ["Thumbnail", "LikeButton"].every((name) =>
+            e.children.some(
+              (child) =>
+                child.type === "JSXElement" &&
+                jsxName(child.openingElement, name),
+            ),
           )
         );
       }
@@ -359,7 +360,7 @@ export function checkZenAnswer(mission: string, source: string): boolean {
         );
       }
       case "state-hook":
-        return statePair(source, ["repairProgress", "setRepairProgress"], 0);
+        return statePair(source, ["progress", "setProgress"], 0);
       case "suspense": {
         const e = expression(source);
         return (
@@ -371,7 +372,7 @@ export function checkZenAnswer(mission: string, source: string): boolean {
               a.name.name === "fallback" &&
               a.value?.type === "JSXExpressionContainer" &&
               a.value.expression.type === "JSXElement" &&
-              jsxName(a.value.expression.openingElement, "LoadingSpinner"),
+              jsxName(a.value.expression.openingElement, "BloodwebSpinner"),
           ) &&
           e.children.some(
             (c) =>

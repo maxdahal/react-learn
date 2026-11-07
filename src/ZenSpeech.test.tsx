@@ -106,3 +106,24 @@ it("keeps written guidance available without browser speech support", () => {
     expect.stringContaining("doesn’t support narration"),
   );
 });
+it("cancels and resets the single control while the lesson drawer is open", () => {
+  const { rerender } = render(
+    <ZenSpeech text="Concept first. Then a question." onNotice={vi.fn()} />,
+  );
+  fireEvent.click(screen.getByRole("button"));
+  const before = synth.cancel.mock.calls.length;
+  rerender(
+    <ZenSpeech
+      text="Concept first. Then a question."
+      suspend
+      onNotice={vi.fn()}
+    />,
+  );
+  expect(synth.cancel.mock.calls.length).toBeGreaterThan(before);
+  fireEvent.click(screen.getByRole("button"));
+  expect(synth.speak).toHaveBeenCalledOnce();
+  rerender(
+    <ZenSpeech text="Concept first. Then a question." onNotice={vi.fn()} />,
+  );
+  expect(screen.getByRole("button", { name: "Play narration" })).toBeTruthy();
+});

@@ -1,4 +1,4 @@
-ZEN FOG: JS TO REACT — MASTER CURRICULUM
+REACT & JS ZEN FOG — MASTER V2
 
 1. Install Node.js 22 or newer from https://nodejs.org.
 2. Open a terminal in the folder containing package.json.
@@ -8,18 +8,21 @@ ZEN FOG: JS TO REACT — MASTER CURRICULUM
 
 Keep the terminal running while learning. Ctrl+C stops the server.
 
-Repair 16 generators through 25 small, calm missions.
+Repair 16 generators through 27 small, calm missions.
+Read the short Tip & concept first, then answer one question.
+Use the menu icon to jump to any phase or mission; it stays hidden otherwise.
 One card. One code field or action. No timers or penalties.
 Press Enter or Next to check your code. If you're unsure, another try
 reveals a gentle hint. Correct answers stay visible until you choose Next.
 Back lets you review. Long code wraps so you can read it on your phone.
 
-The speaker reads the short card text in English at 0.85x.
+The speaker reads the tip first, then the task, in English at 0.85x.
 Click it to play, pause, resume, or replay. A browser English voice is needed;
 written instructions always work. The bell mutes quiet completion sounds.
 
 Drafts, completed missions, and partial repairs save on this device.
-Earlier Syntax Lab and Zen Fog progress is preserved separately.
+Compatible master-v1 work carries forward; changed exercises use new scaffolds.
+Original master-v1, Syntax Lab, and earlier Zen Fog saves remain untouched.
 No account, API key, backend, or deployment is needed to learn locally.
 
 Read README.md for the curriculum, source guide, and framework examples.

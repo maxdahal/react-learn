@@ -4,8 +4,8 @@ import {
   zenMissions,
 } from "./zenLessons";
 
-// The master curriculum reorders the course. Earlier saved work stays untouched.
-export const zenStorageKey = "zen-fog-master-v1";
+// V2 preserves earlier storage and carries forward only compatible missions.
+export const zenStorageKey = "zen-fog-master-v2";
 export type ZenProgress = {
   generator: number;
   mission: number;
@@ -33,7 +33,19 @@ export function emptyZenProgress(): ZenProgress {
 export function readZenProgress(): ZenProgress {
   const empty = emptyZenProgress();
   try {
-    const saved = JSON.parse(localStorage.getItem(zenStorageKey) || "null");
+    const current = localStorage.getItem(zenStorageKey);
+    const migrating = current === null;
+    const saved = JSON.parse(
+      current ?? localStorage.getItem("zen-fog-master-v1") ?? "null",
+    );
+    const changed = new Set([
+      "arrow",
+      "parameters",
+      "map",
+      "composition",
+      "state-hook",
+      "suspense",
+    ]);
     if (!saved || typeof saved !== "object") return empty;
     const generator = Number.isInteger(saved.generator)
       ? Math.max(0, Math.min(zenGenerators.length - 1, saved.generator))
@@ -49,14 +61,20 @@ export function readZenProgress(): ZenProgress {
       ? [
           ...new Set<string>(
             saved.solved.filter(
-              (id: unknown) => typeof id === "string" && validIds.has(id),
+              (id: unknown) =>
+                typeof id === "string" &&
+                validIds.has(id) &&
+                (!migrating || !changed.has(id)),
             ),
           ),
         ]
       : [];
     const answers: Record<string, string> = {};
     for (const id of validIds)
-      if (typeof saved.answers?.[id] === "string")
+      if (
+        typeof saved.answers?.[id] === "string" &&
+        (!migrating || !changed.has(id))
+      )
         answers[id] = saved.answers[id].slice(0, 2000);
     return {
       generator,

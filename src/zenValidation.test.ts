@@ -19,14 +19,16 @@ describe("master curriculum syntax checks", () => {
     ).toEqual(Object.keys(answers).sort());
   });
   it.each([
-    ["arrow", "function repair() {}"],
-    ["parameters", "const Survivor = (props) => {};"],
+    ["arrow", "function Repair() {}"],
+    ["parameters", "const Perk = (props) => {};"],
     ["state-pair", 'const { item, setItem } = useState("Medkit");'],
     ["spread", 'inventory.push("Medkit")'],
     ["rest", "const pack = (items) => items;"],
     ["template", '"survivor-${id}"'],
-    ["map", 'survivors.map(name => <SurvivorHUD name="Dwight" />)'],
+    ["map", "survivors.map(s => <li>Dwight</li>)"],
     ["filter", "survivors.filter(s => true)"],
+    ["find", "survivors.filter(s => s.isInjured)"],
+    ["find", "survivors.find(s => true)"],
     ["flat-map", "chests.map(c => c.items)"],
     ["reduce", "chests.reduce((total, chest) => chest.items.length, 0)"],
     ["ternary", 'isInjured ? "Healthy" : "Injured!"'],
@@ -39,15 +41,12 @@ describe("master curriculum syntax checks", () => {
     ["module-import", 'import openExitGate from "./gate";'],
     ["await", "const escape = () => { openExitGate(); };"],
     ["module-export", "export default escape();"],
-    ["composition", "<SurvivorHUD />"],
+    ["composition", "<VideoList><Thumbnail /></VideoList>"],
     ["key", "key={index}"],
-    [
-      "state-hook",
-      'const [repairProgress, setRepairProgress] = useState("0");',
-    ],
+    ["state-hook", 'const [progress, setProgress] = useState("0");'],
     [
       "suspense",
-      "<Suspense fallback={LoadingSpinner}><MatchStats /></Suspense>",
+      "<Suspense fallback={BloodwebSpinner}><MatchStats /></Suspense>",
     ],
     ["client-directive", "use client"],
     ["streaming", "renderToString(<App />)"],
@@ -58,7 +57,7 @@ describe("master curriculum syntax checks", () => {
     expect(
       checkZenAnswer(
         "map",
-        "survivors.map(person => { return <SurvivorHUD name={person} />; });",
+        "survivors.map(person => { return <li>{person.name}</li>; });",
       ),
     ).toBe(true);
     expect(
@@ -76,7 +75,7 @@ describe("master curriculum syntax checks", () => {
     expect(
       checkZenAnswer(
         "state-hook",
-        "const [repairProgress, setRepairProgress] = React.useState(0)",
+        "const [progress, setProgress] = React.useState(0)",
       ),
     ).toBe(true);
     expect(checkZenAnswer("client-directive", '"use client";')).toBe(true);
