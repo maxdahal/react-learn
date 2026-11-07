@@ -1,288 +1,447 @@
-export type ZenLanguage = "en-US" | "ne-NP";
-export type ZenLesson = {
-  topic: string;
-  kind: "code" | "principle" | "platform";
-  question: Record<ZenLanguage, string>;
-  description: Record<ZenLanguage, string>;
-  starter: string;
+export type ZenMission = {
+  id: string;
+  kind: "code" | "repair" | "platform" | "principle";
+  question: string;
+  description: string;
+  starter?: string;
   context?: string;
-  hints: Record<ZenLanguage, string[]>;
+  hints: string[];
+  success: string;
+  actionLabel?: string;
 };
-function lesson(
-  topic: string,
-  en: string,
-  ne: string,
-  description: string,
-  neDescription: string,
-  starter: string,
-  hints: string[],
-  neHints: string[],
-  context?: string,
-): ZenLesson {
-  return {
-    topic,
-    kind: "code",
-    question: { "en-US": en, "ne-NP": ne },
-    description: { "en-US": description, "ne-NP": neDescription },
-    starter,
-    context,
-    hints: { "en-US": hints, "ne-NP": neHints },
-  };
-}
-export const zenLessons: ZenLesson[] = [
-  lesson(
-    "Arrow functions",
-    "Give run an arrow function.",
-    "run लाई एरो फङ्सन दिनुहोस्।",
-    "Keep the inputs empty and the body simple.",
-    "प्यारामिटर खाली राख्नुहोस् र सानो बडी बनाउनुहोस्।",
-    "const run = ",
-    [
-      "Place an arrow between the parentheses and the body.",
-      "Try () => {} after const run =.",
-    ],
-    [
-      "कोष्ठक र बडीको बीचमा एरो राख्नुहोस्।",
-      "const run = पछि () => {} राखेर हेर्नुहोस्।",
-    ],
-    "function run() {}",
-  ),
-  lesson(
-    "Object destructuring",
-    "Unpack one perk.",
-    "एउटा पर्क निकाल्नुहोस्।",
-    "Take perk from this survivor’s loadout.",
-    "यो सर्भाइभरको लोडआउटबाट perk निकाल्नुहोस्।",
-    "const { _____ } = survivorLoadout;",
-    [
-      "The property’s name becomes your local variable.",
-      "Replace the blank with perk.",
-    ],
-    [
-      "प्रोपर्टीको नाम नै स्थानीय भेरिएबल बन्छ।",
-      "खाली ठाउँमा perk राख्नुहोस्।",
-    ],
-    "{ perk: 'Self-Care', level: 3 }",
-  ),
-  lesson(
-    "Spread",
-    "Add a Medkit. Keep the inventory.",
-    "इनभेन्टरी जोगाउँदै Medkit थप्नुहोस्।",
-    "Copy prev into a new array before adding the item.",
-    "सामान थप्नुअघि prev लाई नयाँ एरेमा प्रतिलिपि गर्नुहोस्।",
-    "[..._____, 'Medkit']",
-    [
-      "The three dots spread the existing array.",
-      'Use prev after the dots: [...prev, "Medkit"].',
-    ],
-    [
-      "तीनवटा थोप्लाले पुरानो एरेका मानहरू फैलाउँछन्।",
-      'थोप्लापछि prev राख्नुहोस्: [...prev, "Medkit"]।',
-    ],
-  ),
-  lesson(
-    "Template literals",
-    "Give this survivor a dynamic tag.",
-    "सर्भाइभरलाई गतिशील ट्याग दिनुहोस्।",
-    "Combine survivor- and id using backticks.",
-    "ब्याकटिक प्रयोग गरेर survivor- र id जोड्नुहोस्।",
-    "",
-    [
-      "Backticks wrap the string; ${…} holds the variable.",
-      "Try `survivor-${id}`.",
-    ],
-    [
-      "स्ट्रिङलाई ब्याकटिकले घेर्नुहोस् र भेरिएबललाई ${…} भित्र राख्नुहोस्।",
-      "`survivor-${id}` लेखेर हेर्नुहोस्।",
-    ],
-    "const id = 4;",
-  ),
-  lesson(
-    "Mapping",
-    "Make one list item for each survivor.",
-    "हरेक सर्भाइभरको लागि एउटा सूची आइटम बनाउनुहोस्।",
-    "Return an li containing the current name.",
-    "हालको name भएको li फर्काउनुहोस्।",
-    "survivors.map(name => _____)",
-    [
-      "The name parameter holds one survivor at a time.",
-      "Try <li>{name}</li> in the blank.",
-    ],
-    [
-      "name प्यारामिटरले एकपटकमा एउटा सर्भाइभरको नाम पाउँछ।",
-      "खाली ठाउँमा <li>{name}</li> राख्नुहोस्।",
-    ],
-    "const survivors = ['Dwight', 'Meg'];",
-  ),
-  lesson(
-    "Filtering",
-    "Find the injured teammates.",
-    "चोट लागेका साथीहरू छान्नुहोस्।",
-    "Keep a survivor when isInjured is true.",
-    "isInjured true भएको सर्भाइभरलाई मात्र राख्नुहोस्।",
-    "survivors.filter(s => _____)",
-    [
-      "Read the injury property from the current parameter.",
-      "Try s.isInjured in the blank.",
-    ],
-    [
-      "हालको प्यारामिटरबाट चोटको प्रोपर्टी पढ्नुहोस्।",
-      "खाली ठाउँमा s.isInjured राख्नुहोस्।",
-    ],
-  ),
-  lesson(
-    "Flattening",
-    "Gather the chest loot into one array.",
-    "चेस्टका सामान एउटै एरेमा जम्मा गर्नुहोस्।",
-    "Use flatMap to collect each chest’s items.",
-    "हरेक चेस्टका items जम्मा गर्न flatMap प्रयोग गर्नुहोस्।",
-    "chests.flatMap(c => _____)",
-    [
-      "The callback should return the current chest’s items array.",
-      "Try c.items in the blank.",
-    ],
-    [
-      "क्यालब्याकले हालको चेस्टको items एरे फर्काउनुपर्छ।",
-      "खाली ठाउँमा c.items राख्नुहोस्।",
-    ],
-  ),
-  lesson(
-    "Conditionals",
-    "Choose a gentle health label.",
-    "हेल्थको स्थिति छान्नुहोस्।",
-    "Show Injured when isInjured is true; otherwise show Healthy.",
-    "isInjured true हुँदा Injured, नभए Healthy देखाउनुहोस्।",
-    "isInjured ? _____ : 'Healthy'",
-    [
-      "A ternary chooses between two values. The labels are strings.",
-      'Put "Injured" in the blank, including its quotes.',
-    ],
-    [
-      "टर्नरीले दुई मानमध्ये एउटा छान्छ। यहाँ लेबलहरू स्ट्रिङ हुन्।",
-      'खाली ठाउँमा उद्धरणसहित "Injured" राख्नुहोस्।',
-    ],
-  ),
+export type ZenGenerator = { topic: string; missions: ZenMission[] };
+
+// Each mission occupies the same single card. Related ideas never compete on screen.
+export const zenGenerators: ZenGenerator[] = [
   {
-    ...lesson(
-      "Immutability",
-      "How can React notice a state update?",
-      "रियाक्टले स्टेटको अपडेट कसरी थाहा पाउँछ?",
-      "Choose the principle behind an immutable object update.",
-      "अब्जेक्टको अपरिवर्तनीय अपडेटको सिद्धान्त छान्नुहोस्।",
-      "",
-      [],
-      [],
-      "state.health = 0; // same object reference",
-    ),
-    kind: "principle",
+    topic: "Arrow functions",
+    missions: [
+      {
+        id: "arrow",
+        kind: "code",
+        question: "Give repair an arrow function.",
+        description:
+          "Turn this survivor action into a concise function with no parameters.",
+        context: "function repair() {}",
+        starter: "const repair = ",
+        hints: [
+          "An arrow connects the parameter parentheses to the function body.",
+          "After const repair =, try () => {}.",
+        ],
+        success:
+          "The arrow connects the empty parameters to the function body.",
+      },
+    ],
   },
-  lesson(
-    "Async / await",
-    "Wait for the gate’s promise.",
-    "गेटको प्रमिस पूरा हुने समय पर्खनुहोस्।",
-    "Complete the await line inside an async action.",
-    "एसिङ्क कामभित्र await को लाइन पूरा गर्नुहोस्।",
-    "await _____()",
-    [
-      "Call the function that opens the exit gate.",
-      "Replace the blank with openExitGate.",
-    ],
-    [
-      "एक्जिट गेट खोल्ने फङ्सनलाई कल गर्नुहोस्।",
-      "खाली ठाउँमा openExitGate राख्नुहोस्।",
-    ],
-  ),
-  lesson(
-    "ES modules",
-    "Share SurvivorHUD with another file.",
-    "SurvivorHUD लाई अर्को फाइलसँग साझा गर्नुहोस्।",
-    "Make it this module’s default export.",
-    "यसलाई मोड्युलको default export बनाउनुहोस्।",
-    "export default _____;",
-    [
-      "Export the component’s name, without calling it.",
-      "Replace the blank with SurvivorHUD.",
-    ],
-    [
-      "कम्पोनेन्टलाई कल नगरी त्यसको नाम export गर्नुहोस्।",
-      "खाली ठाउँमा SurvivorHUD राख्नुहोस्।",
-    ],
-  ),
-  lesson(
-    "JSX composition",
-    "Bring two small components together.",
-    "दुईवटा साना कम्पोनेन्ट जोड्नुहोस्।",
-    "Place Thumbnail and LikeButton inside VideoList.",
-    "VideoList भित्र Thumbnail र LikeButton राख्नुहोस्।",
-    "<VideoList>_____</VideoList>",
-    [
-      "Use capitalized JSX component tags.",
-      "Try <Thumbnail /><LikeButton /> in the blank.",
-    ],
-    [
-      "ठूलो अक्षरबाट सुरु हुने JSX ट्याग प्रयोग गर्नुहोस्।",
-      "खाली ठाउँमा <Thumbnail /><LikeButton /> राख्नुहोस्।",
-    ],
-  ),
-  lesson(
-    "Stable keys",
-    "Keep each survivor’s identity.",
-    "हरेक सर्भाइभरको पहिचान जोगाउनुहोस्।",
-    "Add a stable key to the mapped survivor element.",
-    "म्याप गरिएको सर्भाइभर एलिमेन्टमा स्थिर key थप्नुहोस्।",
-    "key={_____}",
-    [
-      "Use the survivor’s data ID rather than its position.",
-      "Try survivor.id in the blank.",
-    ],
-    [
-      "सूचीको स्थानको सट्टा सर्भाइभरको डेटा ID प्रयोग गर्नुहोस्।",
-      "खाली ठाउँमा survivor.id राख्नुहोस्।",
-    ],
-  ),
-  lesson(
-    "React state",
-    "Give the repair meter a memory.",
-    "मर्मत मिटरलाई सम्झना दिनुहोस्।",
-    "Start progress at the number 0 with useState.",
-    "useState बाट progress को सुरुवात शून्य अङ्कमा गर्नुहोस्।",
-    "const [progress, setProgress] = _____(0);",
-    [
-      "The hook returns a state value and its setter.",
-      "Replace the blank with useState.",
-    ],
-    [
-      "हुकले स्टेटको मान र त्यसको सेटर फर्काउँछ।",
-      "खाली ठाउँमा useState राख्नुहोस्।",
-    ],
-  ),
-  lesson(
-    "Suspense & frameworks",
-    "Wrap MatchStats with a Loading fallback.",
-    "MatchStats लाई Loading फल्ब्याकले घेर्नुहोस्।",
-    "React builds UI; frameworks such as Next.js support async server components.",
-    "रियाक्टले UI बनाउँछ; Next.js जस्ता फ्रेमवर्कले एसिङ्क सर्भर कम्पोनेन्टलाई समर्थन गर्छन्।",
-    "<Suspense fallback={_____}><MatchStats /></Suspense>",
-    [
-      "The fallback is JSX shown while supported content waits.",
-      "Try <Loading /> in the blank.",
-    ],
-    [
-      "समर्थित सामग्री पर्खँदा देखाइने फल्ब्याक JSX हो।",
-      "खाली ठाउँमा <Loading /> राख्नुहोस्।",
-    ],
-  ),
   {
-    ...lesson(
-      "Web & native",
-      "Same idea. A different renderer.",
-      "एउटै सोच। फरक रेन्डरर।",
-      "Compare Web and React Native building blocks (syntax only).",
-      "Web र React Native का आधारभूत एलिमेन्टको सिन्ट्याक्स तुलना गर्नुहोस्।",
-      "",
-      ["Switch to Native once to see View instead of div."],
-      ["div को सट्टा View हेर्न एकपटक Native छान्नुहोस्।"],
-    ),
-    kind: "platform",
+    topic: "Object & array destructuring",
+    missions: [
+      {
+        id: "parameters",
+        kind: "code",
+        question: "Unpack the props as they arrive.",
+        description:
+          "Destructure title and isInjured directly in the Survivor function’s parameter.",
+        context: "props = { title: 'Meg', isInjured: true }",
+        starter: "const Survivor = (_____) => {};",
+        hints: [
+          "An object pattern uses braces to pick properties by name.",
+          "Replace the blank with { title, isInjured }.",
+        ],
+        success: "The function can now use title and isInjured directly.",
+      },
+      {
+        id: "state-pair",
+        kind: "code",
+        question: "Give each array position a name.",
+        description:
+          "useState returns a pair: the current item, then the function that updates it.",
+        starter: "const [_____] = useState('Medkit');",
+        hints: [
+          "Array destructuring uses position, rather than property names.",
+          "Put item, setItem between the square brackets.",
+        ],
+        success: "item holds the value; setItem is its update function.",
+      },
+    ],
+  },
+  {
+    topic: "Rest & spread",
+    missions: [
+      {
+        id: "spread",
+        kind: "code",
+        question: "Add a Medkit without changing inventory.",
+        description:
+          "Spread the existing items into a new array before adding the Medkit.",
+        context: "const inventory = ['Map'];",
+        starter: "[..._____, 'Medkit']",
+        hints: [
+          "Spread unpacks an existing array into a new one.",
+          "Use inventory after the three dots.",
+        ],
+        success:
+          "The new array has Map and Medkit; inventory still has only Map.",
+      },
+      {
+        id: "rest",
+        kind: "code",
+        question: "Gather the remaining supplies.",
+        description:
+          "In a parameter, the same three dots collect arguments into an array named items.",
+        starter: "const pack = (_____) => items;",
+        hints: [
+          "Rest gathers values where a function receives its arguments.",
+          "Use ...items as the parameter.",
+        ],
+        success: 'pack("Map", "Medkit") would collect both values in items.',
+      },
+    ],
+  },
+  {
+    topic: "Template literals",
+    missions: [
+      {
+        id: "template",
+        kind: "code",
+        question: "Create a survivor’s dynamic tag.",
+        description: "Use backticks to combine survivor- with the value of id.",
+        context: "const id = 4;",
+        starter: "",
+        hints: [
+          "Inside backticks, ${…} inserts the value of an expression.",
+          "Try `survivor-${id}`.",
+        ],
+        success: "With id equal to 4, the tag is survivor-4.",
+      },
+    ],
+  },
+  {
+    topic: "Mapping teammate HUDs",
+    missions: [
+      {
+        id: "map",
+        kind: "code",
+        question: "Give each teammate a HUD.",
+        description:
+          "map gives name one survivor at a time; return a SurvivorHUD with that name prop.",
+        context: "['Dwight', 'Meg', 'Claudette', 'Jake']",
+        starter: "survivors.map(name => _____)",
+        hints: [
+          "The callback parameter is the current name, not the whole array.",
+          "Return <SurvivorHUD name={name} /> in the blank.",
+        ],
+        success:
+          "Four names become four HUD elements: Dwight, Meg, Claudette, and Jake.",
+      },
+    ],
+  },
+  {
+    topic: "Filtering injured teammates",
+    missions: [
+      {
+        id: "filter",
+        kind: "code",
+        question: "Keep the injured teammates.",
+        description:
+          "A filter callback keeps its current survivor when isInjured is true.",
+        starter: "survivors.filter(s => _____)",
+        hints: [
+          "Read the injury property from the callback parameter s.",
+          "Try s.isInjured in the blank.",
+        ],
+        success: "filter builds a new array containing only injured survivors.",
+      },
+    ],
+  },
+  {
+    topic: "Flattening & aggregation",
+    missions: [
+      {
+        id: "flat-map",
+        kind: "code",
+        question: "Gather the chest loot.",
+        description:
+          "Return each chest’s items with flatMap to collect one flat inventory.",
+        context: "chests: ['Map'] and ['Medkit', 'Key']",
+        starter: "chests.flatMap(c => _____)",
+        hints: [
+          "Each callback receives one chest, named c.",
+          "Return c.items in the blank.",
+        ],
+        success: 'The flat inventory is ["Map", "Medkit", "Key"].',
+      },
+      {
+        id: "reduce",
+        kind: "code",
+        question: "Count the supplies across the chests.",
+        description:
+          "reduce carries a running total; add the number of items in the current chest.",
+        context: "chests: ['Map'] and ['Medkit', 'Key']",
+        starter: "chests.reduce((total, chest) => _____, 0)",
+        hints: [
+          "total is the accumulated count; chest.items.length is the next amount.",
+          "Try total + chest.items.length in the blank.",
+        ],
+        success: "The total starts at 0, becomes 1, then becomes 3.",
+      },
+    ],
+  },
+  {
+    topic: "Inline conditionals",
+    missions: [
+      {
+        id: "ternary",
+        kind: "code",
+        question: "Choose the right health label.",
+        description:
+          "Show Injured! when isInjured is true; otherwise show Healthy.",
+        starter: "isInjured ? _____ : 'Healthy'",
+        hints: [
+          "A ternary chooses between two values, separated by a colon.",
+          'Put "Injured!" in the blank, including the quotes.',
+        ],
+        success: "The condition chooses exactly one of the two labels.",
+      },
+      {
+        id: "and",
+        kind: "code",
+        question: "Show a badge only when it is needed.",
+        description:
+          "Use && to show InjuryBadge only when the boolean isInjured is true.",
+        starter: "isInjured _____ <InjuryBadge />",
+        hints: [
+          "Logical AND can conditionally include an element in JSX.",
+          "Replace the blank with &&.",
+        ],
+        success:
+          "A false boolean renders no badge; a true boolean includes InjuryBadge.",
+      },
+    ],
+  },
+  {
+    topic: "Immutability & pure functions",
+    missions: [
+      {
+        id: "immutable",
+        kind: "code",
+        question: "Heal without changing the original.",
+        description:
+          "Return a new survivor object with health set to 100, keeping the other properties.",
+        starter: "const heal = survivor => (_____);",
+        hints: [
+          "Spread the original object, then replace health in the new object.",
+          "Try { ...survivor, health: 100 } in the blank.",
+        ],
+        success:
+          "heal returns a new reference and leaves its input untouched, keeping updates predictable.",
+      },
+    ],
+  },
+  {
+    topic: "Async JavaScript & ES modules",
+    missions: [
+      {
+        id: "module-import",
+        kind: "code",
+        question: "Bring in the gate utility.",
+        description:
+          "Import the named openExitGate function from the local ./gate module.",
+        starter: "import { _____ } from './gate';",
+        hints: [
+          "A named import uses the exported name inside braces.",
+          "Put openExitGate inside the braces.",
+        ],
+        success: "The imported function is now available in this module.",
+      },
+      {
+        id: "await",
+        kind: "code",
+        question: "Wait for the gate’s promise.",
+        description:
+          "Inside this async action, await openExitGate so the following work waits for it.",
+        starter: "const escape = async () => { _____ };",
+        hints: [
+          "await waits for a promise inside an async function without blocking the UI thread.",
+          "Try await openExitGate(); in the blank.",
+        ],
+        success:
+          "The action waits for the promise while the browser can keep responding.",
+      },
+      {
+        id: "module-export",
+        kind: "code",
+        question: "Share the completed gate action.",
+        description:
+          "Make escape the default export so another file can import it.",
+        starter: "export default _____;",
+        hints: [
+          "Export the function’s name rather than calling it.",
+          "Replace the blank with escape.",
+        ],
+        success: "Another module can now import escape as the default export.",
+      },
+    ],
+  },
+  {
+    topic: "Component composition & JSX",
+    missions: [
+      {
+        id: "composition",
+        kind: "code",
+        question: "Build a HUD from a smaller component.",
+        description:
+          "Nest PerkIcon inside SurvivorHUD using capitalized JSX component tags.",
+        starter: "<SurvivorHUD>_____</SurvivorHUD>",
+        hints: [
+          "JSX children go between the parent’s opening and closing tags.",
+          "Place <PerkIcon /> in the blank.",
+        ],
+        success:
+          "SurvivorHUD receives PerkIcon as children, just as layouts can combine Thumbnail and LikeButton.",
+      },
+    ],
+  },
+  {
+    topic: "List rendering & stable keys",
+    missions: [
+      {
+        id: "key",
+        kind: "code",
+        question: "Keep each survivor’s identity.",
+        description:
+          "Use the survivor’s stable data ID as the key for each mapped HUD.",
+        context: "survivors.map(survivor => <SurvivorHUD … />)",
+        starter: "key={_____}",
+        hints: [
+          "An ID follows the same survivor even when the list order changes.",
+          "Try survivor.id in the blank.",
+        ],
+        success:
+          "Stable keys help React match each component with its data across updates.",
+      },
+    ],
+  },
+  {
+    topic: "Reactive state & events",
+    missions: [
+      {
+        id: "state-hook",
+        kind: "code",
+        question: "Give the repair meter a memory.",
+        description:
+          "Start repairProgress at 0 with useState and name its setter setRepairProgress.",
+        starter: "const [repairProgress, setRepairProgress] = _____(0);",
+        hints: [
+          "The hook returns the current state value and a setter.",
+          "Replace the blank with useState.",
+        ],
+        success:
+          "The state value persists between renders; its setter requests an update.",
+      },
+      {
+        id: "state-meter",
+        kind: "repair",
+        question: "Repair at your own pace.",
+        description:
+          "Each click adds 25 using the previous state and updates this live React meter.",
+        context: "setRepairProgress(prev => prev + 25)",
+        hints: [
+          "Click Repair +25 until the meter is full; there is no time limit.",
+        ],
+        success:
+          "Four state updates brought the meter to 100, one render at a time.",
+        actionLabel: "Repair +25",
+      },
+    ],
+  },
+  {
+    topic: "UI library & full-stack frameworks",
+    missions: [
+      {
+        id: "suspense",
+        kind: "code",
+        question: "Give waiting content a soft fallback.",
+        description:
+          "React builds UI; full-stack frameworks add routing and server data loading, which can integrate with Suspense.",
+        context: "Next.js · React Router framework mode",
+        starter: "<Suspense fallback={_____}><MatchStats /></Suspense>",
+        hints: [
+          "Suspense shows a fallback while supported content waits; it does not fetch data by itself.",
+          "Place <LoadingSpinner /> in the blank.",
+        ],
+        success:
+          "The fallback covers supported loading; an async component needs a compatible server framework.",
+      },
+    ],
+  },
+  {
+    topic: "Web & native versatility",
+    missions: [
+      {
+        id: "platform",
+        kind: "platform",
+        question: "One React idea, different building blocks.",
+        description:
+          "Switch from Web to Native to compare browser DOM with native iOS and Android primitives.",
+        hints: ["Switch to Native once to see View in place of div."],
+        success:
+          "React Native and Expo use native views; this browser comparison is a syntax model.",
+      },
+    ],
+  },
+  {
+    topic: "Server Components, streaming & compiler",
+    missions: [
+      {
+        id: "client-directive",
+        kind: "code",
+        question: "Keep an interactive button on the client.",
+        description:
+          "Server Components load data on the server; mark this hook-using file as a client entry in a compatible framework.",
+        context: "// RepairButton.tsx uses useState and onClick",
+        starter: "",
+        hints: [
+          "The directive goes at the very beginning of the module, inside quotes.",
+          'Try "use client"; as the first line.',
+        ],
+        success:
+          "The client entry can use state and events while server components provide data.",
+      },
+      {
+        id: "streaming",
+        kind: "code",
+        question: "Let the page shell arrive first.",
+        description:
+          "On a Node server, renderToPipeableStream can stream HTML while Suspense boundaries wait for supported content.",
+        starter: "renderToPipeableStream(_____)",
+        hints: [
+          "Pass the root React element to the server rendering function.",
+          "Put <App /> in the blank.",
+        ],
+        success:
+          "A framework can send the shell first, then stream ready content through its boundaries.",
+      },
+      {
+        id: "compiler",
+        kind: "principle",
+        question: "What can React Compiler optimize?",
+        description:
+          "When enabled in a supported build, React Compiler automatically memoizes eligible components and calculations.",
+        hints: [],
+        actionLabel: "Reuse eligible calculations and component work",
+        success:
+          "Server data, streamed HTML, client interaction, and compiler optimizations each have a place.",
+      },
+    ],
   },
 ];
+export const zenMissions = zenGenerators.flatMap(
+  (generator) => generator.missions,
+);
+export function generatorComplete(generator: ZenGenerator, solved: string[]) {
+  return generator.missions.every((mission) => solved.includes(mission.id));
+}
+export function allGeneratorsComplete(solved: string[]) {
+  return zenMissions.every((mission) => solved.includes(mission.id));
+}

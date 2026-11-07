@@ -11,10 +11,10 @@
     sans-serif;
   color: #f8fafc;
   background: #0f172a;
+  color-scheme: dark;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  color-scheme: dark;
 }
 * {
   box-sizing: border-box;
@@ -24,245 +24,298 @@ body {
   min-width: 280px;
 }
 button,
-input {
+input,
+textarea {
   font: inherit;
 }
 button,
 a,
-input {
+input,
+textarea {
   -webkit-tap-highlight-color: transparent;
 }
 button {
   cursor: pointer;
 }
+button:disabled {
+  cursor: default;
+}
 button:focus-visible,
 a:focus-visible {
-  outline: 2px solid #6ee7b7;
+  outline: 2px solid #2dd4bf;
   outline-offset: 5px;
 }
 .zen-shell {
   background:
-    radial-gradient(ellipse at 50% 42%, #23343750, transparent 62%), #0f172a;
-}
-.zen-progress-track {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: #263344;
-}
-.zen-progress-track > div {
-  height: 100%;
-  background: #10b981;
-  box-shadow: 0 0 12px #10b98140;
-  transition: width 0.3s ease;
+    radial-gradient(ellipse at 50% 42%, #23404435, transparent 65%), #0f172a;
 }
 .zen-header {
   max-width: 1280px;
   margin: auto;
-  padding: 32px 48px;
+  padding: 30px 48px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 20px;
 }
 .zen-brand {
   display: flex;
   align-items: center;
   gap: 12px;
-  color: #d7e5df;
+  color: #edf5f4;
   text-decoration: none;
-  font-size: 15px;
-  font-weight: 550;
+  font-size: 18px;
+  font-weight: 650;
   letter-spacing: -0.02em;
 }
 .zen-brand > svg {
-  color: #83a99b;
+  color: #74c4b8;
 }
 .zen-subtitle {
   display: block;
   margin-top: 3px;
-  font-size: 11px;
-  color: #9caeb9;
+  font-size: 13px;
+  color: #a8b9c7;
   font-weight: 400;
   letter-spacing: 0.02em;
 }
-.zen-language {
+.zen-sound {
   display: flex;
-  background: #172234;
-  border: 1px solid #2c3c4d;
-  border-radius: 30px;
-  padding: 4px;
-  gap: 2px;
-  flex-shrink: 0;
-}
-.zen-language button {
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
   border: 0;
+  border-radius: 12px;
+  padding: 8px 10px;
   background: transparent;
-  color: #a1b3bf;
-  border-radius: 24px;
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  padding: 9px 13px;
-  min-height: 34px;
-  transition:
-    color 0.15s,
-    background 0.15s;
+  color: #b1c6ca;
+  font-size: 13px;
 }
-.zen-language button[aria-pressed="true"] {
-  background: #344a4b;
-  color: #e5f5ed;
+.zen-sound:hover {
+  background: #1e293b;
 }
 .zen-main {
-  width: min(100% - 48px, 640px);
-  margin: clamp(42px, 10vh, 120px) auto 0;
-  padding-bottom: 48px;
+  width: min(100% - 48px, 760px);
+  margin: clamp(28px, 5vh, 60px) auto 0;
+  padding-bottom: 40px;
 }
 .zen-step-line {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin: 0 8px 18px;
-  min-height: 28px;
-  color: #9dafa9;
-  font-size: 12px;
-  letter-spacing: 0.03em;
+  margin: 0 8px 20px;
+  color: #c3d4dc;
+  font-size: 16px;
+  line-height: 1.6;
 }
-.zen-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border: 0;
-  background: none;
-  color: #a1b3bf;
-  font-size: 12px;
-  min-height: 36px;
-  padding: 0 4px;
-}
-.zen-back:hover {
-  color: #e2ece6;
+.zen-pace {
+  color: #a7bfbb;
+  font-size: 14px;
 }
 .zen-card {
-  padding: 48px;
+  padding: 44px 48px;
   background: #1e293b;
-  border: 1px solid #334350;
-  box-shadow: 0 20px 70px #02061725;
+  border: 1px solid #3b4c5c;
+  box-shadow: 0 20px 70px #02061720;
 }
 .zen-eyebrow {
-  display: block;
-  color: #9fb6ab;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
+  color: #aacbc8;
+  font-size: 13px;
+  line-height: 1.7;
   margin-bottom: 22px;
+  letter-spacing: 0.025em;
+}
+.zen-eyebrow > span {
+  color: #b2c0cd;
+  white-space: nowrap;
 }
 .zen-question-row {
   display: flex;
   align-items: flex-start;
-  gap: 14px;
+  gap: 16px;
 }
 h1 {
   margin: 0;
-  font-size: clamp(25px, 3.1vw, 32px);
-  line-height: 1.3;
-  letter-spacing: -0.035em;
-  font-weight: 500;
+  font-size: 28px;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+  font-weight: 700;
   text-wrap: balance;
   flex: 1;
 }
 .zen-speaker {
   display: grid;
   place-items: center;
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   flex-shrink: 0;
   border-radius: 50%;
-  border: 1px solid #40515e;
-  color: #a9beb6;
+  border: 1px solid #586e7b;
+  color: #b8e0d9;
   background: transparent;
-  margin-top: 2px;
 }
-.zen-speaker:hover,
-.zen-speaker[aria-pressed="true"] {
-  background: #2d4247;
-  color: #d9f5e5;
+.zen-speaker:hover {
+  background: #2c424c;
+  color: #f8fafc;
 }
 .zen-description {
-  margin: 16px 0 0;
-  color: #b0bfcc;
-  font-size: 14px;
-  line-height: 1.75;
-  max-width: 49ch;
+  margin: 18px 0 0;
+  color: #c9d5e1;
+  font-size: 20px;
+  line-height: 1.65;
+  max-width: 52ch;
 }
 .zen-context {
   display: block;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
-  font-size: 12px;
+  font-size: 16px;
   line-height: 1.8;
-  color: #9eb2bb;
-  margin-top: 14px;
+  color: #b4c6d4;
+  margin-top: 20px;
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
 }
 .zen-form {
-  margin-top: 32px;
+  margin-top: 28px;
 }
 .zen-input {
   width: 100%;
-  border: 1px solid #526771;
-  border-radius: 12px;
-  background: #162234;
-  color: #e1efe8;
-  height: 60px;
-  padding: 0 18px;
+  min-width: 0;
+  border: 1px solid #65818c;
+  border-radius: 14px;
+  background: #142234;
+  color: #effaf8;
+  display: block;
+  min-height: 78px;
+  padding: 20px 22px;
+  line-height: 1.6;
+  resize: none;
+  overflow: hidden;
+  overflow-wrap: anywhere;
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
-  font-size: 15px;
-  caret-color: #6ee7b7;
+  font-size: 22px;
+  caret-color: #2dd4bf;
   transition:
     border-color 0.2s,
     box-shadow 0.2s;
 }
 .zen-input:focus {
   outline: none;
-  border-color: #78a795;
-  box-shadow: 0 0 0 3px #78a79512;
+  border-color: #2dd4bf;
+  box-shadow: 0 0 0 3px #2dd4bf18;
+}
+.zen-input[readonly] {
+  border-color: #5b938b;
+  color: #c1ece0;
 }
 .zen-input::selection {
-  background: #44665b;
+  background: #276b64;
   color: white;
 }
 .zen-feedback {
-  min-height: 30px;
+  min-height: 24px;
 }
 .zen-hint,
-.zen-notice {
-  font-size: 12px;
-  line-height: 1.75;
-  color: #b1c8bc;
-  padding-top: 12px;
-  margin: 0 0 12px;
+.zen-notice,
+.zen-success {
+  font-size: 20px;
+  line-height: 1.65;
+  margin: 18px 0;
   overflow-wrap: anywhere;
-  animation: zen-reveal 0.18s ease;
+  animation: zen-reveal 0.2s ease;
+}
+.zen-hint {
+  color: #c0eee5;
+  padding: 16px 18px;
+  border-radius: 14px;
+  border: 1px solid #43756e;
+  background: #23413f;
+}
+.zen-success {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  color: #adede0;
+}
+.zen-success > svg {
+  flex-shrink: 0;
+  margin-top: 5px;
 }
 .zen-notice {
-  color: #aabac5;
+  color: #c4d3df;
+}
+.zen-meter-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 13px;
+  color: #b1c9c8;
+  line-height: 1.7;
+  margin: 8px 0 10px;
+}
+.zen-meter {
+  position: relative;
+  height: 5px;
+  background: #34485a;
+  border-radius: 10px;
+  margin-bottom: 30px;
+}
+.zen-meter > div {
+  height: 100%;
+  border-radius: inherit;
+  background: #2dd4bf;
+  transition: width 0.35s ease;
+}
+.zen-meter-earned > div {
+  box-shadow: 0 0 12px #2dd4bf30;
+}
+.zen-spark {
+  position: absolute;
+  top: -7px;
+  color: #adf4e6;
+  opacity: 0;
+  pointer-events: none;
+  animation: zen-spark 0.65s ease-out;
+}
+.zen-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.zen-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  background: transparent;
+  color: #c3d3df;
+  font-size: 16px;
+  min-height: 54px;
+  padding: 10px 2px;
+}
+.zen-back:disabled {
+  opacity: 0.45;
+}
+.zen-back:hover:not(:disabled) {
+  color: #f8fafc;
 }
 .zen-primary {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
+  min-height: 54px;
+  flex: 1;
   width: 100%;
-  min-height: 50px;
-  border: 1px solid #6b9a85;
+  border: 1px solid #2dd4bf;
   border-radius: 12px;
-  background: #b5cfbd;
-  color: #14271f;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 14px 18px;
+  background: #2dd4bf;
+  color: #102b2a;
+  font-size: 18px;
+  font-weight: 650;
+  padding: 14px 20px;
   line-height: 1.5;
   transition: background 0.15s;
 }
@@ -270,23 +323,24 @@ h1 {
   flex-shrink: 0;
 }
 .zen-primary:hover {
-  background: #c6ddcc;
+  background: #69e5d5;
 }
 .zen-enter {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 7px;
-  font-size: 10px;
-  color: #9eafbb;
-  padding-top: 14px;
+  justify-content: flex-end;
+  gap: 8px;
+  font-size: 12px;
+  color: #b0c0ce;
+  padding-top: 16px;
+  line-height: 1.7;
 }
 .zen-enter > span {
-  font-size: 13px;
+  font-size: 15px;
 }
 .zen-save-note {
-  color: #92a39e;
-  font-size: 11px;
+  color: #a5bdbb;
+  font-size: 13px;
   text-align: center;
   margin: 24px 16px 0;
   line-height: 1.8;
@@ -296,43 +350,41 @@ h1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 14px;
-  background: #162234;
-  border: 1px solid #526771;
-  border-radius: 12px;
-  padding: 12px;
-  color: #d5e8dc;
-  min-height: 64px;
+  gap: 16px;
+  background: #142234;
+  border: 1px solid #65818c;
+  border-radius: 14px;
+  padding: 24px;
+  color: #e3faf4;
+  min-height: 110px;
+  text-align: left;
 }
-.zen-platform-labels {
-  display: flex;
-  gap: 4px;
-  font-size: 12px;
-  color: #97aab5;
+.zen-platform-name {
+  display: block;
+  font-size: 22px;
+  font-weight: 600;
 }
-.zen-platform-labels > span {
-  padding: 8px 12px;
-  border-radius: 7px;
-}
-.zen-platform-labels .selected {
-  background: #344d47;
-  color: #e4f2e7;
+.zen-platform-detail {
+  display: block;
+  font-size: 16px;
+  color: #b4cbcf;
+  margin-top: 6px;
 }
 .zen-platform code {
-  padding-right: 6px;
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
-  font-size: 15px;
+  font-size: 22px;
+  white-space: nowrap;
 }
 .zen-complete-icon {
   display: grid;
   place-items: center;
-  width: 48px;
-  height: 48px;
-  border: 1px solid #476857;
-  color: #a7cdb2;
-  background: #293e38;
+  width: 56px;
+  height: 56px;
+  border: 1px solid #437f75;
+  color: #b0f0e2;
+  background: #294840;
   border-radius: 50%;
-  margin-bottom: 26px;
+  margin-bottom: 30px;
 }
 .zen-complete .zen-primary {
   margin-top: 32px;
@@ -345,46 +397,70 @@ h1 {
     opacity: 1;
   }
 }
+@keyframes zen-spark {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  35% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.2) translateY(-8px);
+  }
+}
 @media (max-width: 640px) {
   .zen-header {
     padding: 24px;
   }
   .zen-main {
-    margin-top: 44px;
+    margin-top: 24px;
   }
   .zen-card {
     padding: 32px 26px;
   }
-  .zen-eyebrow {
-    margin-bottom: 20px;
-  }
-  .zen-input {
-    font-size: 16px;
-    padding: 0 12px;
-  }
   .zen-question-row {
     gap: 10px;
   }
-  .zen-form {
-    margin-top: 28px;
+  .zen-input {
+    padding: 20px 16px;
+  }
+  .zen-sound span {
+    display: none;
+  }
+  .zen-platform {
+    padding: 20px 16px;
+  }
+  .zen-step-line {
+    font-size: 14px;
+  }
+  .zen-pace {
+    font-size: 12px;
+  }
+  .zen-actions {
+    gap: 18px;
   }
 }
 @media (max-width: 360px) {
   .zen-header {
-    padding: 22px 18px;
+    padding: 20px 18px;
   }
   .zen-main {
-    width: calc(100% - 32px);
-    margin-top: 28px;
+    width: calc(100% - 28px);
+    margin-top: 16px;
   }
   .zen-card {
     padding: 28px 20px;
   }
-  .zen-platform-labels > span {
-    padding: 8px;
+  .zen-pace {
+    display: none;
   }
-  .zen-platform code {
-    font-size: 13px;
+  .zen-platform {
+    flex-wrap: wrap;
+  }
+  .zen-primary {
+    padding: 14px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

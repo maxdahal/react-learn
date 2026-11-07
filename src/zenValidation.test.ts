@@ -1,76 +1,92 @@
 import { describe, expect, it } from "vitest";
 import { checkZenAnswer } from "./zenValidation";
-export const solutions: Record<number, string> = {
-  0: "const run = () => {};",
-  1: "const { perk } = survivorLoadout;",
-  2: "[...prev, 'Medkit']",
-  3: "`survivor-${id}`",
-  4: "survivors.map(name => <li>{name}</li>)",
-  5: "survivors.filter(s => s.isInjured)",
-  6: "chests.flatMap(c => c.items)",
-  7: "isInjured ? 'Injured' : 'Healthy'",
-  9: "await openExitGate()",
-  10: "export default SurvivorHUD;",
-  11: "<VideoList><Thumbnail /><LikeButton /></VideoList>",
-  12: "key={survivor.id}",
-  13: "const [progress, setProgress] = useState(0);",
-  14: "<Suspense fallback={<Loading />}><MatchStats /></Suspense>",
-};
-describe("Zen syntax checks", () => {
-  it.each(Object.entries(solutions))(
-    "accepts the required solution for generator index %s",
-    (index, source) => {
-      expect(checkZenAnswer(Number(index), source)).toBe(true);
+import { zenMissions } from "./zenLessons";
+import answers from "./test/zenAnswers.json";
+
+describe("master curriculum syntax checks", () => {
+  it.each(Object.entries(answers))(
+    "accepts the required %s construct",
+    (id, source) => {
+      expect(checkZenAnswer(id, source)).toBe(true);
     },
   );
+  it("has a checked example for every code mission", () => {
+    expect(
+      zenMissions
+        .filter((m) => m.kind === "code")
+        .map((m) => m.id)
+        .sort(),
+    ).toEqual(Object.keys(answers).sort());
+  });
   it.each([
-    [0, "function run() {}"],
-    [1, "const { level } = survivorLoadout;"],
-    [2, "prev.push('Medkit')"],
-    [3, "'survivor-${id}'"],
-    [4, "survivors.map(name => <li>Dwight</li>)"],
-    [5, "survivors.filter(s => true)"],
-    [6, "chests.map(c => c.items)"],
-    [7, "isInjured ? 'Healthy' : 'Injured'"],
-    [9, "openExitGate()"],
-    [10, "export default SurvivorHUD();"],
-    [11, "<VideoList><Thumbnail /></VideoList>"],
-    [12, "key={index}"],
-    [13, 'const [progress, setProgress] = useState("0");'],
-    [14, "<Suspense fallback={Loading}><MatchStats /></Suspense>"],
-  ])(
-    "gives another try for a misconception in generator %s",
-    (index, source) => {
-      expect(checkZenAnswer(Number(index), String(source))).toBe(false);
-    },
-  );
-  it("accepts formatting, different quotes, and callback parameter names", () => {
-    expect(checkZenAnswer(2, '[ ...prev, "Medkit" ];')).toBe(true);
+    ["arrow", "function repair() {}"],
+    ["parameters", "const Survivor = (props) => {};"],
+    ["state-pair", 'const { item, setItem } = useState("Medkit");'],
+    ["spread", 'inventory.push("Medkit")'],
+    ["rest", "const pack = (items) => items;"],
+    ["template", '"survivor-${id}"'],
+    ["map", 'survivors.map(name => <SurvivorHUD name="Dwight" />)'],
+    ["filter", "survivors.filter(s => true)"],
+    ["flat-map", "chests.map(c => c.items)"],
+    ["reduce", "chests.reduce((total, chest) => chest.items.length, 0)"],
+    ["ternary", 'isInjured ? "Healthy" : "Injured!"'],
+    ["and", "isInjured || <InjuryBadge />"],
+    [
+      "immutable",
+      "const heal = survivor => { survivor.health = 100; return survivor; };",
+    ],
+    ["immutable", "const heal = survivor => ({ health: 100, ...survivor });"],
+    ["module-import", 'import openExitGate from "./gate";'],
+    ["await", "const escape = () => { openExitGate(); };"],
+    ["module-export", "export default escape();"],
+    ["composition", "<SurvivorHUD />"],
+    ["key", "key={index}"],
+    [
+      "state-hook",
+      'const [repairProgress, setRepairProgress] = useState("0");',
+    ],
+    [
+      "suspense",
+      "<Suspense fallback={LoadingSpinner}><MatchStats /></Suspense>",
+    ],
+    ["client-directive", "use client"],
+    ["streaming", "renderToString(<App />)"],
+  ])("gives a gentle retry for a %s misconception", (id, source) => {
+    expect(checkZenAnswer(id, source)).toBe(false);
+  });
+  it("accepts callback aliases, whitespace, block returns, and quote styles", () => {
     expect(
       checkZenAnswer(
-        4,
-        "survivors.map(survivor => { return <li>{survivor}</li>; });",
+        "map",
+        "survivors.map(person => { return <SurvivorHUD name={person} />; });",
       ),
     ).toBe(true);
     expect(
       checkZenAnswer(
-        5,
+        "filter",
         "survivors.filter(function (person) { return person.isInjured; })",
       ),
     ).toBe(true);
-    expect(checkZenAnswer(6, "chests.flatMap(chest => chest.items)")).toBe(
-      true,
-    );
     expect(
-      checkZenAnswer(13, "const [progress, setProgress] = React.useState(0)"),
+      checkZenAnswer(
+        "reduce",
+        "chests.reduce((sum, box) => box.items.length + sum, 0)",
+      ),
     ).toBe(true);
+    expect(
+      checkZenAnswer(
+        "state-hook",
+        "const [repairProgress, setRepairProgress] = React.useState(0)",
+      ),
+    ).toBe(true);
+    expect(checkZenAnswer("client-directive", '"use client";')).toBe(true);
   });
-  it("never evaluates submitted code and handles incomplete input", () => {
-    expect(checkZenAnswer(0, 'throw new Error("should never run")')).toBe(
+  it("rejects incomplete text and never executes learner code", () => {
+    expect(checkZenAnswer("arrow", 'throw new Error("must not execute")')).toBe(
       false,
     );
-    expect(checkZenAnswer(3, "`unfinished")).toBe(false);
-    expect(checkZenAnswer(0, "a".repeat(2001))).toBe(false);
-    expect(checkZenAnswer(3, "")).toBe(false);
+    expect(checkZenAnswer("template", "`unfinished")).toBe(false);
+    expect(checkZenAnswer("arrow", "a".repeat(2001))).toBe(false);
+    expect(checkZenAnswer("template", "")).toBe(false);
   });
 });

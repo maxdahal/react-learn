@@ -1,6 +1,12 @@
 // @vitest-environment jsdom
 import React from "react";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import ZenSpeech from "./ZenSpeech";
 const voices = [
@@ -11,6 +17,13 @@ const synth = {
   getVoices: vi.fn(() => voices),
   cancel: vi.fn(),
   speak: vi.fn(),
+  paused: false,
+  pause: vi.fn(() => {
+    synth.paused = true;
+  }),
+  resume: vi.fn(() => {
+    synth.paused = false;
+  }),
 };
 class Utterance {
   text: string;
@@ -20,6 +33,7 @@ class Utterance {
 }
 beforeEach(() => {
   vi.clearAllMocks();
+  synth.paused = false;
   synth.getVoices.mockReturnValue(voices);
   vi.stubGlobal("speechSynthesis", synth);
   vi.stubGlobal("SpeechSynthesisUtterance", Utterance);
@@ -28,60 +42,65 @@ afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
 });
-it("uses one manual speaker control, fixed calm rate, and the matching voice", () => {
-  const onNotice = vi.fn();
+it("plays, pauses, resumes, and replays with a single control at 0.85x in English", () => {
   render(
-    <ZenSpeech text="Take your time." language="en-US" onNotice={onNotice} />,
+    <ZenSpeech text="Take your time. One steady step." onNotice={vi.fn()} />,
   );
   expect(synth.speak).not.toHaveBeenCalled();
   expect(screen.getAllByRole("button")).toHaveLength(1);
-  fireEvent.click(screen.getByRole("button"));
-  expect(synth.speak.mock.calls[0][0]).toMatchObject({
-    text: "Take your time.",
+  fireEvent.click(screen.getByRole("button", { name: "Play narration" }));
+  const utterance = synth.speak.mock.calls[0][0] as SpeechSynthesisUtterance;
+  expect(utterance).toMatchObject({
+    text: "Take your time. One steady step.",
     lang: "en-US",
     rate: 0.85,
     voice: voices[0],
   });
-  fireEvent.click(screen.getByRole("button", { name: "Stop narration" }));
-  expect(synth.cancel).toHaveBeenCalled();
-  expect(synth.speak).toHaveBeenCalledTimes(1);
+  fireEvent.click(screen.getByRole("button", { name: "Pause narration" }));
+  expect(synth.pause).toHaveBeenCalledOnce();
+  fireEvent.click(screen.getByRole("button", { name: "Resume narration" }));
+  expect(synth.resume).toHaveBeenCalledOnce();
+  act(() => utterance.onend?.({} as SpeechSynthesisEvent));
+  fireEvent.click(screen.getByRole("button", { name: "Replay narration" }));
+  expect(synth.speak).toHaveBeenCalledTimes(2);
 });
-it("cancels stale speech when language or question changes and on unmount", () => {
-  const onNotice = vi.fn();
+it("cancels paused or playing speech on a new card and ignores cancelled events", () => {
   const { rerender, unmount } = render(
-    <ZenSpeech text="Hello" language="en-US" onNotice={onNotice} />,
+    <ZenSpeech text="First question." onNotice={vi.fn()} />,
   );
   fireEvent.click(screen.getByRole("button"));
-  const before = synth.cancel.mock.calls.length;
-  rerender(<ZenSpeech text="नमस्ते" language="ne-NP" onNotice={onNotice} />);
-  expect(synth.cancel.mock.calls.length).toBeGreaterThan(before);
+  const stale = synth.speak.mock.calls[0][0] as SpeechSynthesisUtterance;
   fireEvent.click(screen.getByRole("button"));
-  expect(synth.speak.mock.calls[1][0]).toMatchObject({
-    lang: "ne-NP",
-    rate: 0.85,
-    voice: voices[1],
-  });
+  const before = synth.cancel.mock.calls.length;
+  rerender(<ZenSpeech text="Second question." onNotice={vi.fn()} />);
+  expect(synth.cancel.mock.calls.length).toBeGreaterThan(before);
+  act(() => stale.onend?.({} as SpeechSynthesisEvent));
+  expect(screen.getByRole("button", { name: "Play narration" })).toBeTruthy();
+  fireEvent.click(screen.getByRole("button", { name: "Play narration" }));
+  expect(synth.resume).toHaveBeenCalledOnce();
+  expect(synth.speak).toHaveBeenCalledTimes(2);
+  expect(synth.paused).toBe(false);
   const last = synth.cancel.mock.calls.length;
   unmount();
   expect(synth.cancel.mock.calls.length).toBeGreaterThan(last);
 });
-it("explains missing Nepali voices without falling back to English and retries loaded voices", () => {
+it("explains unavailable voices without using a non-English voice and retries later", () => {
   const onNotice = vi.fn();
-  synth.getVoices.mockReturnValue([voices[0]]);
-  render(<ZenSpeech text="नमस्ते" language="ne-NP" onNotice={onNotice} />);
+  synth.getVoices.mockReturnValue([voices[1]]);
+  render(<ZenSpeech text="A question." onNotice={onNotice} />);
   fireEvent.click(screen.getByRole("button"));
   expect(synth.speak).not.toHaveBeenCalled();
   expect(onNotice).toHaveBeenLastCalledWith(
-    expect.stringContaining("नेपाली आवाज उपलब्ध छैन"),
+    expect.stringContaining("English voice isn’t available"),
   );
   synth.getVoices.mockReturnValue(voices);
   fireEvent.click(screen.getByRole("button"));
-  expect(synth.speak.mock.calls[0][0]).toMatchObject({ voice: voices[1] });
+  expect(synth.speak).toHaveBeenCalledOnce();
 });
-it("handles browsers without speech support quietly", () => {
+it("keeps written guidance available without browser speech support", () => {
   vi.stubGlobal("speechSynthesis", undefined);
   const onNotice = vi.fn();
-  render(<ZenSpeech text="Hello" language="en-US" onNotice={onNotice} />);
+  render(<ZenSpeech text="A question." onNotice={onNotice} />);
   fireEvent.click(screen.getByRole("button"));
   expect(onNotice).toHaveBeenLastCalledWith(
     expect.stringContaining("doesn’t support narration"),

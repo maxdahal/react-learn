@@ -10,185 +10,234 @@ import {
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import ZenApp from "./ZenApp";
-import { zenLessons } from "./zenLessons";
-import { readZenProgress, zenStorageKey } from "./zenProgress";
-
-const solutions: Record<number, string> = {
-  0: "const run = () => {};",
-  1: "const { perk } = survivorLoadout;",
-  2: "[...prev, 'Medkit']",
-  3: "`survivor-${id}`",
-  4: "survivors.map(name => <li>{name}</li>)",
-  5: "survivors.filter(s => s.isInjured)",
-  6: "chests.flatMap(c => c.items)",
-  7: "isInjured ? 'Injured' : 'Healthy'",
-  9: "await openExitGate()",
-  10: "export default SurvivorHUD;",
-  11: "<VideoList><Thumbnail /><LikeButton /></VideoList>",
-  12: "key={survivor.id}",
-  13: "const [progress, setProgress] = useState(0);",
-  14: "<Suspense fallback={<Loading />}><MatchStats /></Suspense>",
-};
+import { zenGenerators, zenMissions } from "./zenLessons";
+import {
+  emptyZenProgress,
+  readZenProgress,
+  zenStorageKey,
+} from "./zenProgress";
+import examples from "./test/zenAnswers.json";
+const answers: Record<string, string> = examples;
+const audio = vi.hoisted(() => ({ chime: vi.fn() }));
+vi.mock("./useZenChime", () => ({
+  default: (enabled: boolean) => (enabled ? audio.chime : () => {}),
+}));
 beforeEach(() => {
   localStorage.clear();
-  window.matchMedia = vi
-    .fn()
-    .mockReturnValue({
-      matches: true,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-    });
+  vi.clearAllMocks();
+  window.matchMedia = vi.fn().mockReturnValue({
+    matches: true,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+  });
 });
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
 });
-async function step(index: number) {
+function seed(generator: number, mission = 0, extra = {}) {
+  localStorage.setItem(
+    zenStorageKey,
+    JSON.stringify({ ...emptyZenProgress(), generator, mission, ...extra }),
+  );
+}
+async function at(generator: number, mission = 0) {
   await waitFor(() =>
     expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(
-      zenLessons[index].question["en-US"],
+      zenGenerators[generator].missions[mission].question,
     ),
   );
 }
-function seed(index: number, extra = {}) {
-  localStorage.setItem(
-    zenStorageKey,
-    JSON.stringify({ ...readZenProgress(), index, ...extra }),
-  );
-}
-async function answer(index: number) {
+async function solve(id: string) {
   fireEvent.change(screen.getByRole("textbox"), {
-    target: { value: solutions[index] },
+    target: { value: answers[id] },
   });
-  fireEvent.click(screen.getByRole("button", { name: "Continue" }));
-  await step(index + 1);
+  fireEvent.click(screen.getByRole("button", { name: "Next" }));
+  await waitFor(() => expect(readZenProgress().solved).toContain(id));
 }
-describe("one calm generator at a time", () => {
-  it("starts with one input and no old game controls", () => {
+describe("cognitively accessible master flow", () => {
+  it("starts with one input, English narration, and no distracting interface", () => {
     render(<ZenApp />);
     expect(screen.getAllByRole("textbox")).toHaveLength(1);
-    expect((screen.getByRole("textbox") as HTMLInputElement).value).toBe(
-      "const run = ",
+    expect((screen.getByRole("textbox") as HTMLTextAreaElement).value).toBe(
+      "const repair = ",
     );
-    expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
+    expect(screen.getAllByRole("article")).toHaveLength(1);
     expect(screen.queryByRole("navigation")).toBeNull();
-    expect(document.querySelector("iframe, aside, textarea")).toBeNull();
-    expect(screen.queryByText("GENERATORS LEFT")).toBeNull();
+    expect(document.querySelector("iframe, aside, .monaco-editor")).toBeNull();
+    expect(screen.queryByRole("group", { name: "Lesson language" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Play narration" })).toBeTruthy();
     expect(
-      screen.getByRole("button", { name: "Read this step aloud" }),
-    ).toBeTruthy();
+      (screen.getByRole("button", { name: "Back" }) as HTMLButtonElement)
+        .disabled,
+    ).toBe(true);
+    expect(audio.chime).not.toHaveBeenCalled();
   });
-  it("reveals progressive hints without changing a draft or completion", async () => {
+  it("reveals progressive mint hints without erasing a draft or playing a failure sound", async () => {
     render(<ZenApp />);
     fireEvent.change(screen.getByRole("textbox"), {
-      target: { value: "const run = function() {}" },
+      target: { value: "const repair = function() {}" },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Continue" }));
-    expect(
-      await screen.findByText(
-        "Place an arrow between the parentheses and the body.",
-      ),
-    ).toBeTruthy();
-    expect(readZenProgress().completed).toEqual([]);
-    expect((screen.getByRole("textbox") as HTMLInputElement).value).toBe(
-      "const run = function() {}",
+    fireEvent.click(screen.getByRole("button", { name: "Next" }));
+    expect(await screen.findByText(zenMissions[0].hints[0])).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Next" }));
+    expect(await screen.findByText(zenMissions[0].hints[1])).toBeTruthy();
+    expect(readZenProgress().solved).toEqual([]);
+    expect((screen.getByRole("textbox") as HTMLTextAreaElement).value).toBe(
+      "const repair = function() {}",
     );
-    fireEvent.click(screen.getByRole("button", { name: "Continue" }));
-    expect(
-      await screen.findByText("Try () => {} after const run =."),
-    ).toBeTruthy();
     expect(screen.queryByRole("alert")).toBeNull();
+    expect(audio.chime).not.toHaveBeenCalled();
   });
-  it("advances with Enter and selects the next missing piece", async () => {
+  it("uses Enter to check, holds encouragement until Next, and selects the next blank", async () => {
     const user = userEvent.setup();
     render(<ZenApp />);
     await user.type(screen.getByRole("textbox"), "() => {{}", {
       skipClick: true,
     });
     await user.keyboard("{Enter}");
-    await step(1);
-    const input = screen.getByRole("textbox") as HTMLInputElement;
-    expect(input.value.slice(input.selectionStart!, input.selectionEnd!)).toBe(
+    expect(await screen.findByText(zenMissions[0].success)).toBeTruthy();
+    await at(0);
+    expect(screen.getByRole("progressbar").getAttribute("aria-valuenow")).toBe(
+      "100",
+    );
+    expect(audio.chime).toHaveBeenCalledOnce();
+    await user.keyboard("{Enter}");
+    await at(1);
+    const field = screen.getByRole("textbox") as HTMLTextAreaElement;
+    expect(field.value.slice(field.selectionStart!, field.selectionEnd!)).toBe(
       "_____",
     );
-    await user.keyboard("perk{Enter}");
-    await step(2);
-    expect(readZenProgress().completed).toEqual([0, 1]);
+    await user.keyboard("{{ title, isInjured }{Enter}");
+    await waitFor(() =>
+      expect(readZenProgress().solved).toContain("parameters"),
+    );
   });
-  it("keeps drafts, previous navigation, language, and prior versions across remounts", async () => {
-    localStorage.setItem("fog-survival-trial-v6", '{"repairs":[0]}');
-    const { unmount } = render(<ZenApp />);
-    await answer(0);
+  it("preserves drafts, Back navigation, and earlier saved work across reloads", async () => {
+    localStorage.setItem("zen-fog-progress-v7", '{"completed":[0]}');
+    const first = render(<ZenApp />);
+    await solve("arrow");
+    fireEvent.click(screen.getByRole("button", { name: "Next" }));
+    await at(1);
     fireEvent.change(screen.getByRole("textbox"), {
       target: { value: "my draft" },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Previous" }));
-    await step(0);
-    expect((screen.getByRole("textbox") as HTMLInputElement).value).toBe(
-      solutions[0],
+    fireEvent.click(screen.getByRole("button", { name: "Back" }));
+    await at(0);
+    expect((screen.getByRole("textbox") as HTMLTextAreaElement).value).toBe(
+      answers.arrow,
     );
-    fireEvent.click(screen.getByRole("button", { name: "Continue" }));
-    await step(1);
-    expect((screen.getByRole("textbox") as HTMLInputElement).value).toBe(
+    fireEvent.click(screen.getByRole("button", { name: "Next" }));
+    await at(1);
+    expect((screen.getByRole("textbox") as HTMLTextAreaElement).value).toBe(
       "my draft",
     );
-    fireEvent.click(screen.getByRole("button", { name: "नेपाली" }));
-    expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(
-      zenLessons[1].question["ne-NP"],
-    );
-    unmount();
+    first.unmount();
     render(<ZenApp />);
-    expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(
-      zenLessons[1].question["ne-NP"],
-    );
-    expect((screen.getByRole("textbox") as HTMLInputElement).value).toBe(
+    await at(1);
+    expect((screen.getByRole("textbox") as HTMLTextAreaElement).value).toBe(
       "my draft",
     );
-    expect(localStorage.getItem("fog-survival-trial-v6")).toBe(
-      '{"repairs":[0]}',
+    expect(localStorage.getItem("zen-fog-progress-v7")).toBe(
+      '{"completed":[0]}',
     );
   });
-  it("completes all sixteen generators and allows a calm review", async () => {
+  it("uses actual functional state updates in the repair meter and resumes partial work", async () => {
+    seed(12, 1);
+    const first = render(<ZenApp />);
+    for (const expected of [25, 50]) {
+      fireEvent.click(screen.getByRole("button", { name: "Repair +25" }));
+      expect(
+        screen
+          .getByRole("progressbar", { name: "Live repair meter" })
+          .getAttribute("aria-valuenow"),
+      ).toBe(String(expected));
+    }
+    first.unmount();
     render(<ZenApp />);
-    for (let i = 0; i < 15; i++) {
-      await step(i);
-      if (i === 8) {
-        expect(screen.queryByRole("textbox")).toBeNull();
+    expect(screen.getByRole("progressbar").getAttribute("aria-valuenow")).toBe(
+      "50",
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Repair +25" }));
+    fireEvent.click(screen.getByRole("button", { name: "Repair +25" }));
+    expect(readZenProgress().repairProgress).toBe(100);
+    expect(readZenProgress().solved).toContain("state-meter");
+    expect(audio.chime).toHaveBeenCalledOnce();
+  });
+  it("runs every mission, powers the gate only after all 16 generators, and retains review", async () => {
+    render(<ZenApp />);
+    for (let generator = 0; generator < zenGenerators.length; generator++) {
+      for (
+        let mission = 0;
+        mission < zenGenerators[generator].missions.length;
+        mission++
+      ) {
+        const task = zenGenerators[generator].missions[mission];
+        await at(generator, mission);
+        if (task.kind === "code") await solve(task.id);
+        else if (task.kind === "repair")
+          for (let i = 0; i < 4; i++)
+            fireEvent.click(screen.getByRole("button", { name: "Repair +25" }));
+        else if (task.kind === "platform") {
+          fireEvent.click(screen.getByRole("button", { name: "Next" }));
+          expect(await screen.findByText(task.hints[0])).toBeTruthy();
+          fireEvent.click(
+            screen.getByRole("switch", { name: "Native preview" }),
+          );
+          expect(screen.getByText("<View />")).toBeTruthy();
+          fireEvent.click(screen.getByRole("button", { name: "Next" }));
+        } else
+          fireEvent.click(
+            screen.getByRole("button", { name: task.actionLabel }),
+          );
+        await waitFor(() =>
+          expect(readZenProgress().solved).toContain(task.id),
+        );
+        expect(readZenProgress().escaped).toBe(false);
         fireEvent.click(
           screen.getByRole("button", {
-            name: "Give React a new object reference",
+            name: task.id === "compiler" ? "Open Exit Gate" : "Next",
           }),
         );
-        await step(9);
-      } else await answer(i);
+      }
     }
-    expect(screen.getByText("<div />")).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "Let the Fog clear" }));
     expect(
-      await screen.findByText(
-        "Switch to Native once to see View instead of div.",
-      ),
+      await screen.findByRole("heading", { name: /The Fog clears/ }),
     ).toBeTruthy();
-    fireEvent.click(screen.getByRole("switch", { name: "Native view" }));
-    expect(screen.getByText("<View />")).toBeTruthy();
-    expect(screen.getByRole("switch").getAttribute("aria-checked")).toBe(
-      "true",
-    );
-    fireEvent.click(screen.getByRole("button", { name: "Let the Fog clear" }));
-    expect(
-      await screen.findByRole("heading", { name: "The Fog clears." }),
-    ).toBeTruthy();
-    expect(readZenProgress().completed).toHaveLength(16);
     expect(readZenProgress().escaped).toBe(true);
+    expect(readZenProgress().solved).toHaveLength(25);
+    expect(screen.getByRole("button", { name: "Play narration" })).toBeTruthy();
+    expect(audio.chime).toHaveBeenCalledTimes(25);
     fireEvent.click(
       screen.getByRole("button", { name: "Return to generator 1" }),
     );
-    await step(0);
-    expect(readZenProgress().completed).toHaveLength(16);
+    await at(0);
+    expect(readZenProgress().solved).toHaveLength(25);
   });
-  it("is usable when saving is unavailable", () => {
+  it("cannot open the exit with incomplete saved work", async () => {
+    seed(15, 2);
+    render(<ZenApp />);
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "Reuse eligible calculations and component work",
+      }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Continue repairing" }));
+    await at(0);
+    expect(readZenProgress().escaped).toBe(false);
+  });
+  it("lets completion sounds be muted and remembers that preference", async () => {
+    render(<ZenApp />);
+    fireEvent.click(
+      screen.getByRole("button", { name: "Mute completion sound" }),
+    );
+    await solve("arrow");
+    expect(audio.chime).not.toHaveBeenCalled();
+    expect(readZenProgress().sound).toBe(false);
+  });
+  it("remains usable with storage disabled", () => {
     vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
       throw Error("disabled");
     });
@@ -200,19 +249,22 @@ describe("one calm generator at a time", () => {
     ).toBeTruthy();
     expect(screen.getByRole("textbox")).toBeTruthy();
   });
-  it("recovers safely from corrupt storage", () => {
+  it("sanitizes corrupt storage and never invents earned completion", () => {
     localStorage.setItem(zenStorageKey, "broken");
-    expect(readZenProgress().index).toBe(0);
-    seed(99, {
-      completed: [0, 0, -1, "1", 99],
+    expect(readZenProgress()).toEqual(emptyZenProgress());
+    seed(99, 99, {
+      solved: ["arrow", "arrow", "unknown", 2],
       escaped: true,
-      answers: { 0: 4, 1: "draft" },
+      repairProgress: -50,
+      answers: { arrow: 8, parameters: "draft" },
     });
     expect(readZenProgress()).toMatchObject({
-      index: 15,
-      completed: [0],
+      generator: 15,
+      mission: 2,
+      solved: ["arrow"],
       escaped: false,
-      answers: { 1: "draft" },
+      repairProgress: 0,
+      answers: { parameters: "draft" },
     });
   });
 });

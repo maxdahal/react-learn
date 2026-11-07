@@ -1,112 +1,109 @@
 import { useEffect, useRef, useState } from "react";
-import { Volume2, Square } from "lucide-react";
-import type { ZenLanguage } from "./zenLessons";
+import { Volume2, Pause, Play, RotateCcw } from "lucide-react";
 
+type SpeechState = "idle" | "playing" | "paused" | "ended";
 export default function ZenSpeech({
   text,
-  language,
   onNotice,
 }: {
   text: string;
-  language: ZenLanguage;
   onNotice: (notice: string) => void;
 }) {
-  const [speaking, setSpeaking] = useState(false);
+  const [state, setState] = useState<SpeechState>("idle");
   const generation = useRef(0);
   const notice = useRef(onNotice);
   notice.current = onNotice;
-
   useEffect(() => {
     generation.current++;
-    setSpeaking(false);
+    setState("idle");
     notice.current("");
     window.speechSynthesis?.cancel();
     return () => {
       generation.current++;
       window.speechSynthesis?.cancel();
     };
-  }, [text, language]);
+  }, [text]);
 
-  function toggleSpeech() {
+  function activate() {
     const synth = window.speechSynthesis;
     if (!synth || typeof SpeechSynthesisUtterance === "undefined") {
       onNotice(
-        language === "ne-NP"
-          ? "यस ब्राउजरमा वाचन उपलब्ध छैन। यहाँको पाठ पढ्न सक्नुहुन्छ।"
-          : "This browser doesn’t support narration. The text is here whenever you need it.",
+        "This browser doesn’t support narration. The written guidance is always here.",
       );
+      return;
+    }
+    if (state === "playing") {
+      synth.pause();
+      setState("paused");
+      return;
+    }
+    if (state === "paused") {
+      synth.resume();
+      setState("playing");
       return;
     }
     generation.current++;
     synth.cancel();
-    if (speaking) {
-      setSpeaking(false);
-      return;
-    }
     const voices = synth.getVoices();
     const voice =
-      voices.find((v) => v.lang.toLowerCase() === language.toLowerCase()) ??
-      voices.find(
-        (v) => v.lang.toLowerCase().split(/[-_]/)[0] === language.split("-")[0],
-      );
+      voices.find((v) => v.lang.toLowerCase() === "en-us") ??
+      voices.find((v) => /^en[-_]/i.test(v.lang));
     if (!voice) {
       onNotice(
-        language === "ne-NP"
-          ? "यस उपकरणमा नेपाली आवाज उपलब्ध छैन। नेपाली पाठ यहाँ पढ्न सक्नुहुन्छ।"
-          : "An English voice isn’t available yet on this device. You can try again when your browser’s voices are ready.",
+        "An English voice isn’t available yet on this device. You can try the speaker again when browser voices are ready.",
       );
       return;
     }
     onNotice("");
+    // cancel() empties the queue but does not clear the browser's paused state.
+    if (synth.paused) synth.resume();
     const current = generation.current;
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = language;
-    utterance.voice = voice;
+    utterance.lang = "en-US";
     utterance.rate = 0.85;
+    utterance.voice = voice;
     utterance.onend = () => {
-      if (current === generation.current) setSpeaking(false);
+      if (current === generation.current) setState("ended");
     };
     utterance.onerror = () => {
       if (current !== generation.current) return;
-      setSpeaking(false);
+      setState("idle");
       onNotice(
-        language === "ne-NP"
-          ? "अहिले वाचन चल्न सकेन। चाहनुहुन्छ भने फेरि प्रयास गर्नुहोस्।"
-          : "Narration couldn’t start this time. You can try the speaker again.",
+        "Narration couldn’t start this time. You can try the speaker again.",
       );
     };
-    setSpeaking(true);
+    setState("playing");
     try {
       synth.speak(utterance);
     } catch {
       utterance.onerror({} as SpeechSynthesisErrorEvent);
     }
   }
-
+  const label =
+    state === "playing"
+      ? "Pause narration"
+      : state === "paused"
+        ? "Resume narration"
+        : state === "ended"
+          ? "Replay narration"
+          : "Play narration";
+  const Icon =
+    state === "playing"
+      ? Pause
+      : state === "paused"
+        ? Play
+        : state === "ended"
+          ? RotateCcw
+          : Volume2;
   return (
     <button
       type="button"
       className="zen-speaker"
-      onClick={toggleSpeech}
-      aria-label={
-        speaking
-          ? language === "ne-NP"
-            ? "वाचन रोक्नुहोस्"
-            : "Stop narration"
-          : language === "ne-NP"
-            ? "यो चरण सुन्नुहोस्"
-            : "Read this step aloud"
-      }
-      aria-pressed={speaking}
-      title={
-        language === "ne-NP" ? "यो चरण सुन्नुहोस्" : "Read this step aloud"
-      }
+      onClick={activate}
+      aria-label={label}
+      title={label}
     >
-      {speaking ? (
-        <Square size={17} aria-hidden="true" />
-      ) : (
-        <Volume2 size={19} aria-hidden="true" />
-      )}
+      <Icon size={20} aria-hidden="true" />
     </button>
   );
 }
