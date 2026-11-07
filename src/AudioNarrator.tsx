@@ -128,7 +128,7 @@ export default function AudioNarrator({
       <div className="audio-top">
         <span>
           <Volume2 size={15} />
-          LISTEN & LEARN
+          SURVIVOR COMMS
         </span>
         <label className="sr-only" htmlFor="narration-language">
           Narration language

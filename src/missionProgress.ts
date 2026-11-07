@@ -5,7 +5,7 @@ export type MissionProgress = {
   drafts: Record<string, Record<string, string>>;
   hints: Record<string, number>;
 };
-export const missionStorageKey = "deep-dive-missions-v5";
+export const missionStorageKey = "fog-survival-missions-v6";
 export function readMissionProgress(): MissionProgress {
   const empty = { explored: [], solved: [], tasks: {}, drafts: {}, hints: {} };
   try {
@@ -32,7 +32,7 @@ export function readMissionProgress(): MissionProgress {
         const valid: Record<string, string> = {};
         for (const [key, val] of Object.entries(files))
           if (
-            ["App.jsx", "Button.jsx"].includes(key) &&
+            ["App.jsx", "Button.jsx", "Perk.jsx"].includes(key) &&
             typeof val === "string"
           )
             valid[key] = val;

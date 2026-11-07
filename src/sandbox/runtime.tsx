@@ -5,7 +5,7 @@ const rootElement = document.getElementById("root")!;
 const root = createRoot(rootElement);
 const style = document.createElement("style");
 style.textContent =
-  '*{box-sizing:border-box}body{font-family:system-ui,sans-serif;background:#172220;color:#dce7d3;padding:24px;margin:0;font-size:14px;line-height:1.8}h2,h3{font-weight:500;letter-spacing:-.5px}button,input{font:inherit;border:1px solid #557044;border-radius:6px;padding:10px 14px;background:#2a3d23;color:#d6eab7;margin:8px 8px 8px 0}input{background:#111e17;max-width:100%;width:170px}label{display:block;padding:8px 0}ul,ol{padding-left:25px}li{padding:7px}pre{font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere}article,[data-native-view]{border:1px solid #4d6540;border-radius:10px;padding:20px;background:#1e3021}[aria-label="Thumbnail"]{background:#47654b;padding:24px;text-align:center;border-radius:7px}p{margin:12px 0}';
+  '*{box-sizing:border-box}body{font-family:system-ui,sans-serif;background:#15191a;color:#e0ddcf;padding:24px;margin:0;font-size:14px;line-height:1.8}h2,h3{font-weight:500;letter-spacing:-.5px}button,input{font:inherit;border:1px solid #756247;border-radius:6px;padding:10px 14px;background:#3c2c22;color:#e6c890;margin:8px 8px 8px 0}input{background:#111e17;max-width:100%;width:170px}label{display:block;padding:8px 0}ul,ol{padding-left:25px}li{padding:7px}pre{font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere}article,[data-native-view]{border:1px solid #68553e;border-radius:10px;padding:20px;background:#24211e}[aria-label="Thumbnail"]{background:#47654b;padding:24px;text-align:center;border-radius:7px}p{margin:12px 0}';
 document.head.append(style);
 let run = "",
   channel = "",
@@ -30,6 +30,11 @@ function send(extra: Record<string, unknown> = {}) {
       ),
       ids: Array.from(rootElement.querySelectorAll("[id]")).map((n) => n.id),
       inputs: rootElement.querySelectorAll("input").length,
+      meters: Array.from(rootElement.querySelectorAll("progress")).map(
+        (n) => n.value,
+      ),
+      perk: !!rootElement.querySelector('[aria-label="Perk icon"]'),
+      healthBar: !!rootElement.querySelector('[aria-label="Health bar"]'),
       native: !!rootElement.querySelector("[data-native-view]"),
       thumbnail: !!rootElement.querySelector('[aria-label="Thumbnail"]'),
       ...extra,

@@ -1,0 +1,1384 @@
+.fog-game {
+  --d-bg: #0d1214;
+  --d-surface: #151d20;
+  --d-panel: #10191b;
+  --d-code: #101619;
+  --d-muted: #8c9998;
+  --d-ink: #e4e1d5;
+  --d-line: #344044;
+  --d-lime: #d9b979;
+  --d-accent: #30271d;
+  --d-soft: #1f292a;
+  --d-string: #c6c18f;
+  background:
+    radial-gradient(ellipse at top left, #43312a25, transparent 60%),
+    var(--d-bg);
+  position: relative;
+  isolation: isolate;
+  min-height: 100dvh;
+}
+.fog-game::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    linear-gradient(#0b1115aa, #0b1114dd),
+    url("/fog-forest.svg") center/cover;
+  pointer-events: none;
+}
+.fog-game::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 10% 70%, #8da6a01a, transparent 50%),
+    radial-gradient(ellipse at 90% 30%, #8b939a12, transparent 60%);
+  animation: fog-drift 28s ease-in-out infinite alternate;
+}
+.fog-game.deck-light {
+  --d-bg: #1c2222;
+  --d-surface: #252b29;
+  --d-panel: #202727;
+  --d-code: #1a2326;
+  --d-muted: #a7b1a7;
+  --d-ink: #f0e7d4;
+  --d-line: #4b554e;
+  --d-lime: #ecd09a;
+  --d-accent: #403729;
+  --d-soft: #303a36;
+  --d-string: #d6d6aa;
+  color-scheme: dark;
+}
+.fog-game .d-topbar {
+  background: #0a1116b8;
+  backdrop-filter: blur(20px);
+  border-bottom-color: #39434899;
+}
+.fog-game .d-brand > span:first-child {
+  border-color: #96774d;
+  background: #35281d;
+  box-shadow: 0 0 20px #cf9c3512;
+}
+.fog-game .v5-brand b {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 12px;
+}
+.fog-game .v5-brand {
+  font-size: 15px !important;
+  gap: 7px;
+}
+.fog-game .d-product-name {
+  font-size: 9px;
+  letter-spacing: 0.4px;
+}
+.fog-game .d-main {
+  margin-top: 26px;
+}
+.fog-game .v5-card {
+  background: linear-gradient(130deg, #21303666, #11191af0 65%);
+  border-color: #50534a99;
+  border-radius: 10px;
+  box-shadow:
+    0 20px 90px #0005,
+    inset 0 1px #bdc9c008;
+  overflow: visible;
+}
+.fog-game .v5-layout {
+  overflow: hidden;
+  border-radius: 10px 10px 0 0;
+}
+.fog-game .v5-guidance {
+  background: linear-gradient(155deg, #333a2f44, #11191d44);
+  border-color: #4c514577;
+}
+.fog-game .v5-guidance .d-card-intro h1 {
+  font-size: 28px;
+  letter-spacing: -0.8px;
+  font-weight: 500;
+}
+.fog-game .v5-task {
+  border-color: #7f68414d;
+  background: linear-gradient(110deg, #6b462825, #332b2430);
+  box-shadow: inset 2px 0 #c49a52;
+}
+.fog-game .v5-task > span {
+  font-size: 7px;
+  letter-spacing: 2px;
+}
+.fog-game .d-next {
+  background: linear-gradient(125deg, #d7b777, #c6a267);
+  border-color: #dfc48e;
+  color: #241d13;
+  border-radius: 3px;
+  letter-spacing: 0.2px;
+}
+.fog-game .d-action {
+  border-radius: 3px;
+  background: #423422;
+  border-color: #8b6d43;
+  color: #e3c58e;
+}
+.fog-game .d-action:hover:not(:disabled) {
+  background: #57432a;
+  border-color: #d9b979;
+}
+.fog-game .d-outline-button {
+  border-radius: 3px;
+  border-color: #4c514a;
+}
+.fog-game .d-progress-heading > span:first-child {
+  font-size: 11px;
+  letter-spacing: 0.2px;
+}
+.fog-game .d-progress-bar {
+  height: 3px;
+  background: #363c37;
+}
+.fog-game .d-progress-bar > i {
+  background: linear-gradient(90deg, #805639, #e0c17e);
+  box-shadow: 0 0 12px #e0c17e55;
+}
+.fog-game .v5-workspace .d-panel-title {
+  color: #8d9995;
+  background: #11191bc9;
+  border-color: #39443e;
+}
+.fog-game .d-panel-title small {
+  font-size: 6px;
+  letter-spacing: 1.2px;
+}
+.fog-game .micro-file-tabs {
+  background: #151a1b;
+}
+.fog-game .micro-editor {
+  border-color: #464d42;
+}
+.fog-game .micro-frame iframe {
+  background: #15191a;
+}
+.fog-game .micro-result.solved,
+.fog-game .v5-explore-result.complete {
+  background: #302b1e;
+  color: #dbc58f;
+}
+.fog-game .d-source .syn-string {
+  color: #c6c18f;
+}
+.fog-game .d-source .syn-keyword {
+  color: #be9b98;
+}
+.fog-game .d-source .syn-method {
+  color: #a6c3bc;
+}
+.fog-game .audio-narrator {
+  border-top-color: #4a5145;
+}
+.fog-game .audio-controls > button {
+  border-radius: 3px;
+}
+.fog-game .d-card-help {
+  border-top: 1px solid #333e37;
+  background: #0e1719aa;
+  border-radius: 0 0 10px 10px;
+}
+.fog-game .d-help-text {
+  background: #31292033;
+  border-left-color: #bd9c5e;
+}
+.fog-game .d-previous {
+  color: #b5b8a5;
+}
+.fog-game .d-index {
+  background: #141c20f5;
+  backdrop-filter: blur(20px);
+  border-color: #5d5d4c;
+}
+.fog-game .d-index h2 {
+  color: #bfac7b;
+}
+.fog-game .d-index > div > button[aria-current="step"] {
+  box-shadow: inset 2px 0 #ac7a45;
+  background: #49352840;
+}
+.fog-effects-toggle {
+  font-size: 8px;
+  font-family: monospace;
+  letter-spacing: 1px;
+  color: #788780;
+  padding: 8px 3px;
+  white-space: nowrap;
+}
+.fog-effects-toggle[aria-checked="true"] {
+  color: #dbbb7a;
+}
+.fog-trial-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+  max-width: 1230px;
+  width: calc(100% - 80px);
+  padding: 22px 0 18px;
+  margin: auto;
+  border-bottom: 1px solid #424c3d77;
+}
+.fog-objective {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #d4b67a;
+}
+.fog-objective > svg {
+  color: #ac9f7d;
+}
+.fog-objective > div {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+.fog-objective span {
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  color: #9aab9f;
+}
+.fog-objective strong {
+  font-family: monospace;
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 1;
+  color: #e0c487;
+}
+.fog-objective > small {
+  font-size: 8px;
+  color: #6d8279;
+  border-left: 1px solid #414d41;
+  padding-left: 12px;
+  white-space: nowrap;
+}
+.fog-team-icons {
+  display: flex;
+  gap: 18px;
+  color: #8ea69c;
+}
+.fog-team-icons > span {
+  position: relative;
+  opacity: 0.8;
+}
+.fog-team-icons i {
+  display: block;
+  width: 15px;
+  height: 2px;
+  background: #a0aa8b;
+  margin: 4px auto 0;
+}
+.fog-terror {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  font-size: 6px;
+  letter-spacing: 1.7px;
+  color: #8c665e;
+}
+.fog-terror i {
+  width: 7px;
+  height: 7px;
+  border: 1px solid #80564d;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px #a2503c0d;
+  animation: fog-danger 4s infinite;
+}
+.fog-exit-control {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 10px;
+  color: #9a9d8b;
+  border: 1px solid #4b5346;
+  padding: 9px 12px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.fog-exit-control.unlocked {
+  color: #e3c68c;
+  border-color: #c1a064;
+  background: #3e3321;
+  box-shadow: 0 0 28px #c1a06415;
+}
+.fog-exit-control > small {
+  font-size: 7px;
+  color: #9e8656;
+  border-left: 1px solid #74613c;
+  padding-left: 9px;
+}
+.fog-machine {
+  color: #94794c;
+  position: relative;
+  margin: 13px -3px 17px;
+}
+.fog-machine svg {
+  width: 100%;
+  max-height: 165px;
+  display: block;
+  filter: drop-shadow(0 12px 15px #0005);
+}
+.fog-machine.powered {
+  color: #dfc47f;
+}
+.fog-machine.powered svg {
+  filter: drop-shadow(0 0 12px #dfc47f22);
+}
+.fog-machine-signal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-size: 6px;
+  letter-spacing: 2px;
+  color: #829286;
+  margin-top: 0;
+}
+.fog-machine-signal i {
+  height: 4px;
+  width: 4px;
+  border-radius: 50%;
+  background: #88603f;
+}
+.fog-machine.powered .fog-machine-signal {
+  color: #c8ba89;
+}
+.fog-machine.powered .fog-machine-signal i {
+  background: #d4ba7a;
+  box-shadow: 0 0 9px #d4ba7a;
+}
+.fog-machine-cable {
+  opacity: 0.45;
+}
+.fog-machine.perfect .fog-machine-cable {
+  animation: fog-cable 1.1s ease-out;
+}
+.fog-sparks {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  pointer-events: none;
+}
+.fog-sparks i {
+  position: absolute;
+  width: 3px;
+  height: 15px;
+  background: #f6d992;
+  transform: rotate(var(--spark-angle)) translateY(-22px);
+  animation: fog-spark 0.75s ease-out both;
+  box-shadow: 0 0 7px #f3c970;
+}
+.fog-skill {
+  padding: 18px 22px;
+  border-top: 1px solid #55553f;
+  background: #161d1b;
+}
+.fog-skill-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 13px;
+  flex-wrap: wrap;
+}
+.fog-skill-heading > span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 8px;
+  letter-spacing: 1.2px;
+  color: #c8ac75;
+}
+.fog-skill-heading label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #a3ad96;
+  font-size: 9px;
+}
+.fog-skill-heading input {
+  width: 12px;
+  height: 12px;
+  accent-color: #ceb073;
+}
+.fog-skill-body {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 18px;
+}
+.fog-skill-body > div:last-child {
+  flex: 1;
+  min-width: 0;
+}
+.fog-skill-body p {
+  font-size: 11px;
+  line-height: 1.9;
+  color: #9eaf9f;
+  margin-bottom: 12px;
+}
+.fog-skill-body .d-action {
+  font-size: 10px;
+  padding: 10px 13px;
+}
+.fog-skill-legend {
+  display: block;
+  font-size: 8px;
+  line-height: 1.9;
+  color: #718777;
+  margin-top: 12px;
+}
+.fog-skill-dial {
+  position: relative;
+  width: 115px;
+  height: 115px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  background: #0d1614;
+  border-radius: 50%;
+  box-shadow: inset 0 0 25px #0007;
+}
+.fog-skill-ring {
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: conic-gradient(
+    #34483d 0deg 223.2deg,
+    #c5c9ad 223.2deg 262.8deg,
+    #e7be63 262.8deg 277.2deg,
+    #c5c9ad 277.2deg 302.4deg,
+    #34483d 302.4deg 360deg
+  );
+  mask: radial-gradient(transparent 61%, #000 62%);
+}
+.fog-skill-dial > span {
+  color: #8d8160;
+}
+.fog-skill-needle {
+  position: absolute;
+  width: 2px;
+  height: 42%;
+  bottom: 50%;
+  left: calc(50% - 1px);
+  transform-origin: bottom center;
+  background: #cb7869;
+  box-shadow: 0 0 7px #a6513d55;
+  z-index: 1;
+}
+.fog-skill-needle:after {
+  content: "";
+  width: 5px;
+  height: 5px;
+  background: #ddaa8c;
+  border-radius: 50%;
+  position: absolute;
+  bottom: -2px;
+  left: -1px;
+}
+.fog-skill.miss {
+  background: #30201c66;
+}
+.fog-skill.miss .fog-skill-dial {
+  box-shadow: 0 0 0 1px #975a47;
+}
+.fog-skill.repaired {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #d2b97d;
+  background: linear-gradient(110deg, #53402655, #1c2720);
+}
+.fog-skill.repaired b {
+  font-size: 10px;
+  letter-spacing: 1px;
+  font-weight: 500;
+}
+.fog-skill.repaired p {
+  font-size: 10px;
+  color: #9caa8d;
+  margin-top: 5px;
+}
+.fog-skill.repaired > svg:last-child {
+  margin-left: auto;
+  opacity: 0.5;
+}
+.fog-perk {
+  height: 39px;
+  width: 39px;
+  display: inline-grid;
+  place-items: center;
+  transform: rotate(45deg);
+  border: 1px solid #8b7352;
+  background: linear-gradient(130deg, #48342b, #282c2b);
+  box-shadow: inset 0 0 0 3px #141d19;
+  color: #ccba8e;
+  flex-shrink: 0;
+}
+.fog-perk > svg {
+  transform: rotate(-45deg);
+}
+.fog-perk.standalone {
+  margin: 6px 0 20px;
+}
+.fog-perk-loadout > div {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin: 24px 0;
+  padding: 0 10px;
+}
+.fog-perk-loadout code {
+  font-size: 10px;
+  color: #ad9578;
+  margin-left: 7px;
+}
+.fog-perk-loadout b {
+  font-size: 12px;
+  font-weight: 450;
+  color: #cfc1a2;
+}
+.fog-perk-loadout > div > svg {
+  color: #6c8375;
+  width: 12px;
+}
+.fog-loot {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 13px 0;
+}
+.fog-loot > span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1.7;
+  padding: 9px 10px;
+  background: #293027;
+  border: 1px solid #4e5743;
+  border-radius: 3px;
+  font-size: 10px;
+  color: #c8c4a3;
+  animation: d-arrive 0.25s;
+}
+.fog-loot > span > svg {
+  color: #8a9d7e;
+  width: 12px;
+}
+.fog-inventory {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 3px;
+}
+.fog-inventory > .d-label {
+  font-size: 7px;
+}
+.fog-inventory > svg {
+  align-self: center;
+  color: #917f55;
+  margin: 9px 0 15px;
+}
+.fog-inventory > small {
+  font-size: 9px;
+  color: #8b9a84;
+  line-height: 1.9;
+  margin-top: 8px;
+}
+.fog-action-preview {
+  text-align: center;
+}
+.fog-action-preview > svg {
+  color: #bc9b5e;
+  margin: 0 auto 16px;
+}
+.fog-action-preview h2,
+.fog-player-tag h2,
+.fog-health h2 {
+  font-size: 24px;
+  letter-spacing: -0.5px;
+  font-weight: 450;
+  margin: 8px 0 20px;
+}
+.fog-action-preview > p {
+  font-size: 11px;
+  color: #93a78d;
+  margin-top: 18px;
+}
+.fog-player-tag {
+  text-align: center;
+}
+.fog-player-tag > svg {
+  margin: auto;
+  color: #a5b19a;
+}
+.fog-player-tag > code {
+  font-size: 12px;
+  background: #2e3024;
+  border: 1px solid #5b5940;
+  color: #c9bb8d;
+  padding: 10px 18px;
+  border-radius: 3px;
+}
+.fog-squad {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+}
+.fog-squad > button {
+  border: 1px solid #4b574a;
+  background: #1a2722;
+  border-radius: 3px;
+  padding: 16px 6px 13px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.fog-squad > button.selected {
+  border-color: #c4ab71;
+  background: #343321;
+}
+.fog-squad svg {
+  color: #b1bc9f;
+}
+.fog-squad b {
+  font-size: 9px;
+  line-height: 1.7;
+  font-weight: 500;
+  margin-top: 9px;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+}
+.fog-squad span {
+  font-size: 7px;
+  margin-top: 6px;
+}
+.fog-squad .injured {
+  color: #c78673;
+}
+.fog-squad .healthy {
+  color: #9caf8c;
+}
+.fog-binding {
+  font-size: 10px;
+  color: #a8b392;
+  border-top: 1px solid #3d4c3c;
+  padding-top: 15px;
+  margin-top: 20px;
+  line-height: 1.9;
+  overflow-wrap: anywhere;
+}
+.fog-survivor-list > div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid #354a3c;
+  padding: 13px 7px;
+  animation: d-arrive 0.3s;
+}
+.fog-survivor-list svg {
+  color: #b87b68;
+}
+.fog-survivor-list b {
+  font-size: 12px;
+  font-weight: 450;
+}
+.fog-survivor-list span {
+  margin-left: auto;
+  font-size: 9px;
+  color: #91a184;
+}
+.fog-survivor-list > small {
+  font-size: 9px;
+  color: #7f927c;
+  display: block;
+  margin-top: 16px;
+}
+.fog-chests > .d-groups {
+  grid-template-columns: 1fr 1fr;
+}
+.fog-chests > .d-groups > div {
+  padding: 13px 10px;
+  background: #212820;
+  border-color: #48563f;
+}
+.fog-chests .fog-loot {
+  gap: 5px;
+  margin-bottom: 0;
+}
+.fog-chests .fog-loot > span {
+  font-size: 9px;
+  padding: 7px;
+}
+.fog-chests > svg {
+  display: block;
+  margin: 17px auto;
+  color: #9b8d63;
+}
+.fog-chests > code {
+  font-size: 10px;
+  line-height: 2;
+  color: #a7b58e;
+  overflow-wrap: anywhere;
+}
+.fog-health {
+  text-align: center;
+  padding: 20px;
+}
+.fog-health > svg {
+  display: block;
+  margin: 0 auto 17px;
+}
+.fog-health.healthy {
+  color: #b0bd93;
+}
+.fog-health.injured {
+  color: #cd8777;
+}
+.fog-health > span {
+  font-size: 10px;
+  opacity: 0.7;
+}
+.fog-health h2 {
+  margin-bottom: 9px;
+}
+.fog-gate-demo {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.fog-gate-bars {
+  display: flex;
+  gap: 10px;
+  height: 95px;
+  padding: 8px 17px;
+  border: 3px solid #626c59;
+  overflow: hidden;
+  transition:
+    gap 1s,
+    opacity 1s;
+}
+.fog-gate-bars > i {
+  height: 85px;
+  width: 7px;
+  border: 1px solid #76806b;
+  background: #374237;
+  transition: transform 1s;
+}
+.fog-gate-bars.open {
+  gap: 30px;
+  opacity: 0.5;
+}
+.fog-gate-bars.open > i {
+  transform: translateY(-45px);
+}
+.fog-gate-demo h3 {
+  font-size: 14px;
+  font-weight: 450;
+  letter-spacing: -0.2px;
+  margin: 20px 0 4px;
+}
+.fog-gate-demo > small {
+  font-size: 8px;
+  color: #778e79;
+  line-height: 1.8;
+  margin-top: 15px;
+}
+.fog-built-hud > div {
+  border: 1px solid #4f5f48;
+  background: #1a2722;
+  border-radius: 5px;
+  padding: 22px;
+  text-align: center;
+  min-height: 180px;
+}
+.fog-built-hud > div > svg {
+  color: #b2b99b;
+  margin: auto;
+}
+.fog-built-hud h3 {
+  font-size: 17px;
+  font-weight: 450;
+  margin: 12px 0 20px;
+}
+.fog-built-hud p {
+  font-size: 10px;
+  color: #7e957e;
+  line-height: 1.8;
+}
+.fog-built-hud .fog-perk {
+  margin: 4px 0 15px;
+}
+.fog-healthbar {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  margin-top: 8px;
+}
+.fog-healthbar > i {
+  height: 9px;
+  width: 62px;
+  transform: skew(-15deg);
+  background: #a5b894;
+}
+.fog-local-meter {
+  text-align: center;
+}
+.fog-local-meter > svg {
+  color: #c7b378;
+  margin: auto;
+}
+.fog-local-meter > h2 {
+  font-family: monospace;
+  font-size: 38px;
+  color: #d4c085;
+  font-weight: 400;
+  margin: 16px 0;
+}
+.fog-local-meter > div {
+  height: 12px;
+  width: 100%;
+  border: 1px solid #6a6947;
+  background: #141f17;
+  padding: 2px;
+  transform: skew(-7deg);
+}
+.fog-local-meter > div > i {
+  display: block;
+  background: linear-gradient(90deg, #85783e, #d7b771);
+  height: 100%;
+  transition: width 0.25s;
+}
+.fog-local-meter > span {
+  display: block;
+  font-size: 10px;
+  color: #82977d;
+  margin-top: 17px;
+}
+.fog-legacy-link {
+  font-size: 8px;
+  border-top: 1px solid #354237;
+  padding-top: 15px;
+  margin: 15px 8px 0;
+}
+.fog-exit-scene {
+  text-align: center;
+  max-width: 900px;
+  margin: 65px auto;
+  padding: 0 25px;
+  position: relative;
+}
+.fog-exit-kicker {
+  font-size: 8px;
+  letter-spacing: 3px;
+  color: #c1a779;
+}
+.fog-exit-scene > h1 {
+  font-size: 45px;
+  letter-spacing: -1.5px;
+  font-weight: 450;
+  line-height: 1.35;
+  margin: 22px 0 15px;
+  color: #e1d6b8;
+}
+.fog-exit-scene > p {
+  font-size: 13px;
+  color: #8fa58f;
+  max-width: 560px;
+  margin: auto;
+  line-height: 1.9;
+}
+.fog-final-gates {
+  height: 300px;
+  max-width: 540px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  margin: 36px auto;
+  border-top: 12px solid #454b3e;
+  border-left: 10px solid #3d493d;
+  border-right: 10px solid #3d493d;
+  background: radial-gradient(ellipse at 50% 100%, #bcd7a322, #12221b 65%);
+  box-shadow: 0 25px 80px #0007;
+}
+.fog-final-door {
+  height: 100%;
+  width: 50%;
+  display: flex;
+  gap: 16px;
+  justify-content: space-around;
+  padding: 0 15px;
+  border: 2px solid #647057;
+  background: linear-gradient(#1b2923b0, #1b2720);
+  transition: transform 1.5s ease-in-out;
+  z-index: 1;
+  position: relative;
+}
+.fog-final-door > i {
+  width: 7px;
+  height: 100%;
+  background: linear-gradient(90deg, #344833, #6d785e, #344833);
+  border-left: 1px solid #79826855;
+}
+.fog-final-light {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at bottom, #e6db9f55, transparent 60%);
+  opacity: 0;
+  transition: opacity 1.5s;
+}
+.fog-exit-emblem {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #ceb476;
+  z-index: 2;
+  transition: opacity 0.5s;
+}
+.fog-exit-scene.opening .fog-final-door.left,
+.fog-exit-scene.escaped .fog-final-door.left {
+  transform: translateX(-95%);
+}
+.fog-exit-scene.opening .fog-final-door.right,
+.fog-exit-scene.escaped .fog-final-door.right {
+  transform: translateX(95%);
+}
+.fog-exit-scene.opening .fog-final-light,
+.fog-exit-scene.escaped .fog-final-light {
+  opacity: 1;
+}
+.fog-exit-scene.opening .fog-exit-emblem {
+  opacity: 0;
+}
+.fog-exit-scene.escaped .fog-exit-emblem {
+  color: #dac888;
+  filter: drop-shadow(0 0 17px #ffe6a244);
+}
+.fog-exit-scene > .d-next {
+  margin: 0 auto 20px;
+  min-width: 220px;
+}
+.fog-exit-scene > .d-link {
+  display: flex;
+  justify-content: center;
+  margin: 20px auto 0;
+  font-size: 11px;
+}
+.fog-escape-success {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #ddc993;
+  letter-spacing: 1.5px;
+  font-size: 10px;
+  padding: 16px;
+}
+.fog-exit-save {
+  display: block;
+  font-size: 9px;
+  color: #6e886f;
+  margin: 25px 0 35px;
+}
+@keyframes fog-drift {
+  to {
+    transform: translate(-25px, 12px);
+    opacity: 0.5;
+  }
+}
+@keyframes fog-danger {
+  50% {
+    opacity: 0.4;
+    box-shadow: 0 0 0 6px #a2503c06;
+  }
+}
+@keyframes fog-spark {
+  to {
+    transform: rotate(var(--spark-angle)) translateY(-85px);
+    opacity: 0;
+  }
+}
+@keyframes fog-cable {
+  25%,
+  65% {
+    opacity: 1;
+    filter: drop-shadow(0 0 6px #f2d993);
+  }
+  100% {
+    opacity: 0.45;
+  }
+}
+@media (max-width: 1050px) {
+  .fog-trial-hud {
+    gap: 20px;
+    width: calc(100% - 50px);
+  }
+  .fog-team-icons {
+    gap: 12px;
+  }
+  .fog-terror {
+    display: none;
+  }
+  .fog-objective > small {
+    font-size: 7px;
+    padding-left: 10px;
+  }
+  .fog-skill-body {
+    gap: 15px;
+  }
+  .fog-skill-dial {
+    width: 100px;
+    height: 100px;
+  }
+  .fog-perk-loadout > div {
+    gap: 12px;
+    padding: 0;
+  }
+  .fog-perk-loadout b {
+    font-size: 11px;
+  }
+  .fog-squad {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .fog-squad > button {
+    padding: 13px 7px;
+  }
+  .fog-machine svg {
+    max-height: 145px;
+  }
+}
+@media (max-width: 800px) {
+  .fog-game .v5-guidance {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  }
+  .fog-game .v5-guidance .d-card-intro {
+    grid-column: 1;
+  }
+  .fog-game .v5-guidance .v5-task {
+    grid-column: 1;
+  }
+  .fog-game .v5-guidance .audio-narrator {
+    grid-column: 2;
+    grid-row: 1/3;
+  }
+  .fog-machine {
+    margin: 5px 0 15px;
+  }
+  .fog-machine svg {
+    max-height: 120px;
+  }
+  .fog-skill {
+    padding: 17px;
+  }
+  .fog-skill-body {
+    gap: 14px;
+  }
+  .fog-skill-dial {
+    height: 95px;
+    width: 95px;
+  }
+  .fog-skill-heading > span {
+    font-size: 7px;
+  }
+  .fog-skill-heading label {
+    font-size: 8px;
+  }
+  .fog-skill-body p {
+    font-size: 11px;
+  }
+  .fog-chests .d-groups {
+    grid-template-columns: 1fr;
+  }
+  .fog-squad {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .fog-game .d-product-name {
+    display: none;
+  }
+  .fog-exit-scene > h1 {
+    font-size: 38px;
+  }
+  .fog-final-gates {
+    height: 270px;
+  }
+}
+@media (max-width: 570px) {
+  .fog-game .d-topbar {
+    padding: 0 15px;
+    gap: 10px;
+  }
+  .fog-game .v5-brand {
+    font-size: 12px !important;
+    gap: 4px;
+  }
+  .fog-game .v5-brand b {
+    font-size: 10px;
+    letter-spacing: 0.7px;
+  }
+  .fog-game .d-topbar > div {
+    gap: 8px;
+  }
+  .fog-game .d-brand > span:first-child {
+    width: 27px;
+    height: 28px;
+    margin-right: 3px;
+  }
+  .fog-effects-toggle {
+    font-size: 7px;
+    letter-spacing: 0.5px;
+  }
+  .fog-game .d-topbar .d-icon-button {
+    width: 24px;
+  }
+  .fog-trial-hud {
+    width: calc(100% - 32px);
+    gap: 14px;
+    padding: 20px 0 15px;
+    flex-wrap: wrap;
+  }
+  .fog-objective {
+    gap: 9px;
+  }
+  .fog-objective > svg {
+    width: 17px;
+  }
+  .fog-objective > div {
+    gap: 8px;
+  }
+  .fog-objective span {
+    font-size: 6px;
+    letter-spacing: 1.1px;
+  }
+  .fog-objective strong {
+    font-size: 24px;
+  }
+  .fog-objective > small {
+    font-size: 7px;
+    border: 0;
+    padding-left: 0;
+  }
+  .fog-team-icons {
+    display: none;
+  }
+  .fog-exit-control {
+    font-size: 9px;
+    gap: 5px;
+    padding: 8px;
+  }
+  .fog-exit-control > svg {
+    width: 12px;
+  }
+  .fog-exit-control > small {
+    display: none;
+  }
+  .fog-game .d-main {
+    margin-top: 21px;
+  }
+  .fog-game .d-progress-heading > span:first-child {
+    font-size: 9px;
+  }
+  .fog-game .d-progress-heading > span:last-child {
+    font-size: 6px;
+  }
+  .fog-game .v5-guidance {
+    display: block;
+    padding: 23px 20px;
+  }
+  .fog-game .v5-guidance .d-card-intro h1 {
+    font-size: 27px;
+  }
+  .fog-machine svg {
+    max-height: 150px;
+  }
+  .fog-machine {
+    margin: 8px auto 15px;
+    max-width: 280px;
+  }
+  .fog-game .v5-guidance .audio-narrator {
+    border-left: 0;
+    border-top: 1px solid #4a5145;
+    padding: 18px 0 0;
+  }
+  .fog-skill {
+    padding: 17px;
+  }
+  .fog-skill-heading {
+    gap: 12px;
+  }
+  .fog-skill-body {
+    align-items: flex-start;
+    gap: 13px;
+  }
+  .fog-skill-dial {
+    width: 82px;
+    height: 82px;
+    margin-top: 4px;
+  }
+  .fog-skill-dial > span > svg {
+    width: 16px;
+  }
+  .fog-skill-body p {
+    font-size: 10px;
+  }
+  .fog-skill-body .d-action {
+    font-size: 9px;
+    padding: 10px;
+  }
+  .fog-skill-legend {
+    font-size: 7px;
+  }
+  .fog-skill.repaired b {
+    font-size: 9px;
+  }
+  .fog-skill.repaired p {
+    font-size: 9px;
+  }
+  .fog-squad {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .fog-squad > button {
+    padding: 14px 3px;
+  }
+  .fog-squad b {
+    font-size: 8px;
+  }
+  .fog-squad span {
+    font-size: 6px;
+  }
+  .fog-perk-loadout b {
+    font-size: 12px;
+  }
+  .fog-perk-loadout > div {
+    gap: 14px;
+  }
+  .fog-perk-loadout code {
+    font-size: 10px;
+  }
+  .fog-chests > .d-groups {
+    grid-template-columns: 1fr 1fr;
+  }
+  .fog-chests .fog-loot > span {
+    font-size: 8px;
+    padding: 7px 5px;
+  }
+  .fog-loot > span {
+    font-size: 10px;
+  }
+  .fog-binding {
+    font-size: 9px;
+  }
+  .fog-exit-scene {
+    margin: 43px auto 0;
+    padding: 0 20px;
+  }
+  .fog-exit-scene > h1 {
+    font-size: 33px;
+    letter-spacing: -1px;
+  }
+  .fog-exit-scene > p {
+    font-size: 12px;
+  }
+  .fog-exit-kicker {
+    font-size: 7px;
+    letter-spacing: 2px;
+  }
+  .fog-final-gates {
+    height: 230px;
+    margin: 30px auto;
+    border-left-width: 7px;
+    border-right-width: 7px;
+  }
+  .fog-final-door {
+    padding: 0 8px;
+    gap: 8px;
+  }
+  .fog-final-door > i {
+    width: 5px;
+  }
+  .fog-exit-scene > .d-next {
+    font-size: 11px;
+  }
+  .fog-escape-success {
+    font-size: 8px;
+    letter-spacing: 1px;
+    line-height: 1.8;
+  }
+  .fog-game .d-footer-note {
+    line-height: 1.8;
+    font-size: 7px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fog-game::after,
+  .fog-terror i,
+  .fog-sparks i,
+  .fog-machine-cable {
+    animation: none !important;
+  }
+  .fog-final-door,
+  .fog-final-light,
+  .fog-exit-emblem,
+  .fog-gate-bars,
+  .fog-gate-bars i {
+    transition: none !important;
+  }
+}
+.fog-game .d-lesson-card:before {
+  content: "";
+  position: absolute;
+  right: 15px;
+  top: 9px;
+  width: 45px;
+  height: 72px;
+  background: repeating-linear-gradient(
+    108deg,
+    transparent 0 10px,
+    #a14e3e24 11px 12px,
+    transparent 13px 17px
+  );
+  mask: linear-gradient(transparent, #000 30%, transparent);
+  pointer-events: none;
+  z-index: 1;
+  transform: skewY(-12deg);
+}
+@media (max-width: 360px) {
+  .fog-game .v5-brand {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+    font-size: 10px !important;
+    line-height: 1.3;
+  }
+  .fog-game .v5-brand b {
+    font-size: 9px;
+    letter-spacing: 0.8px;
+  }
+  .fog-game .d-topbar > div {
+    gap: 8px;
+  }
+  .fog-game .d-topbar .d-outline-button {
+    width: 27px;
+    padding: 6px;
+  }
+  .fog-game .d-topbar {
+    gap: 9px;
+  }
+  .fog-skill-body {
+    gap: 10px;
+  }
+  .fog-skill-dial {
+    width: 75px;
+    height: 75px;
+  }
+}

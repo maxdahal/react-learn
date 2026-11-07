@@ -139,7 +139,7 @@ export default function CodeMission({
       </div>
       <div className="micro-frame">
         <div className="d-panel-title">
-          <span>LIVE REACT PREVIEW</span>
+          <span>LIVE SURVIVOR HUD</span>
           {index === 15 && <small>NATIVE PRIMITIVE MODEL</small>}
           {index === 14 && <small>CLIENT SUSPENSE EXERCISE</small>}
         </div>
