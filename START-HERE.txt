@@ -1,4 +1,4 @@
-REACT & JS FOG SURVIVAL — v6
+ZEN FOG: REACT & JS SURVIVAL — v7
 
 1. Install Node.js 22 or newer from https://nodejs.org.
 2. Open a terminal in the folder containing package.json.
@@ -6,19 +6,19 @@ REACT & JS FOG SURVIVAL — v6
 4. Run: npm run dev
 5. Open the address Vite prints, usually http://localhost:5173.
 
-Repair 16 learning generators to power the Exit Gates.
-Each generator has a visual Field Drill and an editable Repair Blueprint.
-Finish the drill, repair the code, then pass its Skill Check.
+Keep the terminal running while learning. Ctrl+C stops the server.
 
-Press Space or Hit to stop the needle in the marked sector.
-Use Assist for an untimed check with the same repair credit.
-A missed check never deletes your work.
+One calm question. One small input. Press Enter to continue.
+If you're unsure, another try reveals a gentle hint.
+Previous lets you revisit your saved answers.
+No timers, penalties, or code editor setup inside the lesson.
 
-SFX are optional and off by default. English/Nepali narration uses your
-browser's installed voices; transcripts work even without a matching voice.
+Use EN / NP for English or Nepali guidance.
+Click the speaker beside a question to hear it at a calm pace.
+A matching voice must be installed on your device; text always works.
 
-Your old v5 work remains saved separately. The new trial starts fresh.
-Code drafts and generator repairs persist in this browser on this device.
-No account, backend, live game connection, or publishing is required.
+Drafts and progress save in this browser on this device.
+Your earlier Syntax Lab and Fog progress is preserved separately.
+No account, backend, or deployment is required to learn locally.
 
-Keep the terminal running while learning. Ctrl+C stops it.
+Read README.md for the source guide and more details.

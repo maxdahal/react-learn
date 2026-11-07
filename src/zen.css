@@ -1,0 +1,398 @@
+@import "tailwindcss";
+
+:root {
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  color: #f8fafc;
+  background: #0f172a;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  color-scheme: dark;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  min-width: 280px;
+}
+button,
+input {
+  font: inherit;
+}
+button,
+a,
+input {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  cursor: pointer;
+}
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #6ee7b7;
+  outline-offset: 5px;
+}
+.zen-shell {
+  background:
+    radial-gradient(ellipse at 50% 42%, #23343750, transparent 62%), #0f172a;
+}
+.zen-progress-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #263344;
+}
+.zen-progress-track > div {
+  height: 100%;
+  background: #10b981;
+  box-shadow: 0 0 12px #10b98140;
+  transition: width 0.3s ease;
+}
+.zen-header {
+  max-width: 1280px;
+  margin: auto;
+  padding: 32px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.zen-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #d7e5df;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 550;
+  letter-spacing: -0.02em;
+}
+.zen-brand > svg {
+  color: #83a99b;
+}
+.zen-subtitle {
+  display: block;
+  margin-top: 3px;
+  font-size: 11px;
+  color: #9caeb9;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+.zen-language {
+  display: flex;
+  background: #172234;
+  border: 1px solid #2c3c4d;
+  border-radius: 30px;
+  padding: 4px;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.zen-language button {
+  border: 0;
+  background: transparent;
+  color: #a1b3bf;
+  border-radius: 24px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  padding: 9px 13px;
+  min-height: 34px;
+  transition:
+    color 0.15s,
+    background 0.15s;
+}
+.zen-language button[aria-pressed="true"] {
+  background: #344a4b;
+  color: #e5f5ed;
+}
+.zen-main {
+  width: min(100% - 48px, 640px);
+  margin: clamp(42px, 10vh, 120px) auto 0;
+  padding-bottom: 48px;
+}
+.zen-step-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 8px 18px;
+  min-height: 28px;
+  color: #9dafa9;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+}
+.zen-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  background: none;
+  color: #a1b3bf;
+  font-size: 12px;
+  min-height: 36px;
+  padding: 0 4px;
+}
+.zen-back:hover {
+  color: #e2ece6;
+}
+.zen-card {
+  padding: 48px;
+  background: #1e293b;
+  border: 1px solid #334350;
+  box-shadow: 0 20px 70px #02061725;
+}
+.zen-eyebrow {
+  display: block;
+  color: #9fb6ab;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  margin-bottom: 22px;
+}
+.zen-question-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+h1 {
+  margin: 0;
+  font-size: clamp(25px, 3.1vw, 32px);
+  line-height: 1.3;
+  letter-spacing: -0.035em;
+  font-weight: 500;
+  text-wrap: balance;
+  flex: 1;
+}
+.zen-speaker {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid #40515e;
+  color: #a9beb6;
+  background: transparent;
+  margin-top: 2px;
+}
+.zen-speaker:hover,
+.zen-speaker[aria-pressed="true"] {
+  background: #2d4247;
+  color: #d9f5e5;
+}
+.zen-description {
+  margin: 16px 0 0;
+  color: #b0bfcc;
+  font-size: 14px;
+  line-height: 1.75;
+  max-width: 49ch;
+}
+.zen-context {
+  display: block;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+  line-height: 1.8;
+  color: #9eb2bb;
+  margin-top: 14px;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+.zen-form {
+  margin-top: 32px;
+}
+.zen-input {
+  width: 100%;
+  border: 1px solid #526771;
+  border-radius: 12px;
+  background: #162234;
+  color: #e1efe8;
+  height: 60px;
+  padding: 0 18px;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 15px;
+  caret-color: #6ee7b7;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+.zen-input:focus {
+  outline: none;
+  border-color: #78a795;
+  box-shadow: 0 0 0 3px #78a79512;
+}
+.zen-input::selection {
+  background: #44665b;
+  color: white;
+}
+.zen-feedback {
+  min-height: 30px;
+}
+.zen-hint,
+.zen-notice {
+  font-size: 12px;
+  line-height: 1.75;
+  color: #b1c8bc;
+  padding-top: 12px;
+  margin: 0 0 12px;
+  overflow-wrap: anywhere;
+  animation: zen-reveal 0.18s ease;
+}
+.zen-notice {
+  color: #aabac5;
+}
+.zen-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 50px;
+  border: 1px solid #6b9a85;
+  border-radius: 12px;
+  background: #b5cfbd;
+  color: #14271f;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 14px 18px;
+  line-height: 1.5;
+  transition: background 0.15s;
+}
+.zen-primary svg {
+  flex-shrink: 0;
+}
+.zen-primary:hover {
+  background: #c6ddcc;
+}
+.zen-enter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-size: 10px;
+  color: #9eafbb;
+  padding-top: 14px;
+}
+.zen-enter > span {
+  font-size: 13px;
+}
+.zen-save-note {
+  color: #92a39e;
+  font-size: 11px;
+  text-align: center;
+  margin: 24px 16px 0;
+  line-height: 1.8;
+}
+.zen-platform {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  background: #162234;
+  border: 1px solid #526771;
+  border-radius: 12px;
+  padding: 12px;
+  color: #d5e8dc;
+  min-height: 64px;
+}
+.zen-platform-labels {
+  display: flex;
+  gap: 4px;
+  font-size: 12px;
+  color: #97aab5;
+}
+.zen-platform-labels > span {
+  padding: 8px 12px;
+  border-radius: 7px;
+}
+.zen-platform-labels .selected {
+  background: #344d47;
+  color: #e4f2e7;
+}
+.zen-platform code {
+  padding-right: 6px;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 15px;
+}
+.zen-complete-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid #476857;
+  color: #a7cdb2;
+  background: #293e38;
+  border-radius: 50%;
+  margin-bottom: 26px;
+}
+.zen-complete .zen-primary {
+  margin-top: 32px;
+}
+@keyframes zen-reveal {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (max-width: 640px) {
+  .zen-header {
+    padding: 24px;
+  }
+  .zen-main {
+    margin-top: 44px;
+  }
+  .zen-card {
+    padding: 32px 26px;
+  }
+  .zen-eyebrow {
+    margin-bottom: 20px;
+  }
+  .zen-input {
+    font-size: 16px;
+    padding: 0 12px;
+  }
+  .zen-question-row {
+    gap: 10px;
+  }
+  .zen-form {
+    margin-top: 28px;
+  }
+}
+@media (max-width: 360px) {
+  .zen-header {
+    padding: 22px 18px;
+  }
+  .zen-main {
+    width: calc(100% - 32px);
+    margin-top: 28px;
+  }
+  .zen-card {
+    padding: 28px 20px;
+  }
+  .zen-platform-labels > span {
+    padding: 8px;
+  }
+  .zen-platform code {
+    font-size: 13px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

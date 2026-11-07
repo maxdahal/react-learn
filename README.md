@@ -1,74 +1,65 @@
-# React & JS Fog Survival · v6
+# Zen Fog: React & JS Survival · v7
 
-A Dead by Daylight–inspired JavaScript and React learning mini-game. Repair **16 generators**—one concept per screen—to power the Exit Gates and escape the Fog.
+Learn JavaScript and React through 16 quiet, focused prompts. Each screen has one question, one code input or action, and a single primary button. Press **Enter** to continue.
 
-## Run locally
+## Run on your computer
 
-Requires Node.js 22 or newer (npm included).
+Install [Node.js 22 or newer](https://nodejs.org), then open a terminal in this folder:
 
 ```sh
 npm install
 npm run dev
 ```
 
-Open the address Vite prints, normally **http://localhost:5173**. Keep the terminal open; Ctrl+C stops it. The first start builds the local React preview runtime. No API key, backend, account, game connection, or cloud deployment is required.
+Open the address printed in the terminal, usually **http://localhost:5173**. Keep the terminal running while learning; **Ctrl+C** stops the server. You can edit the source in your own editor and Vite will refresh the page.
 
-## One generator, one concept
+No account, API key, backend, or deployment is required. To reproduce the lockfile exactly, use `npm ci` instead of `npm install`.
 
-Every generator has two guided stages:
+## The learning flow
 
-1. **Field drill:** interact with a survivor-themed visual example to restore the first 50%.
-2. **Repair blueprint:** edit real React/JavaScript in Monaco. Syntax and live-rendered behavior are both checked, restoring blueprint progress to 75%. Complete a **skill check** to reach 100% and restore power.
+- Complete the small scaffold in the input. The first blank is selected for you.
+- Press Enter or Continue. A correct answer gently fades into the next question.
+- If you need another try, a short hint appears beneath the input. A second try reveals a more specific hint; mistakes never erase your draft or earned progress.
+- Use Previous to revisit a question. Completed steps remain complete during review.
+- At the last generator, switch between Web’s `<div />` and React Native’s `<View />`, then let the Fog clear.
 
-Timed checks use the marked dial sector. Press **Space** or **Hit** to stop the needle; the gold center earns a perfect check with a spark effect. A miss loses no code or repair progress. **Assist · no timing** provides an untimed check for the same generator credit and is enabled by default when the device requests reduced motion.
+Topics cover arrow functions, destructuring, spread, template literals, map/filter/flatMap, ternaries, immutability, await, default exports, JSX composition, stable keys, state, Suspense and frameworks, and Web/Native primitives.
 
-The Exit Gates unlock only after all **16 verified generators** are repaired. Hold the final switch, wait for the gate timer, and escape. Repairs survive reloads and experiments; reviewing or changing an already completed blueprint does not remove earned power. New repairs still require verified code and a successful check.
+The final Web/Native comparison demonstrates syntax; this Vite website does not run a native renderer or server components. Suspense guidance refers to supported data sources and frameworks such as Next.js.
 
-Previous/Next and **Left/Right Arrow** shortcuts navigate outside editable controls. The generator index lets you revisit any topic. Hints reveal progressively, and worked solutions are hidden behind an explicit choice. A previous callback-practice lab remains accessible from the index.
+## English and Nepali guidance
 
-## Curriculum through the Fog
+The **EN / NP** pill changes the question, description, hints, and controls. The single speaker beside the question reads its guidance using the browser’s native Web Speech API at a fixed **0.85** rate. Click again to stop; changing question or language cancels the previous narration. Audio never starts automatically.
 
-**Generators 1–11 · JavaScript survivor prerequisites:** survivor actions/functions; perk-loadout destructuring; inventory spread; survivor-ID template literals; four-survivor map rendering; injured-teammate filtering; flat chest loot; health ternaries; immutable game state; async exit-gate timers; modular perk imports/exports.
+Voices depend on your browser and operating system. If a matching voice is unavailable, a quiet message explains this when you request narration. Nepali is never silently read with an English voice. If browser voices are still loading, you can click the speaker again later. Written guidance always works.
 
-**Generators 12–16 · Core React:** composing PerkIcon and HealthBar into SurvivorHUD; stable survivor keys and local note state; a functional-updater repair meter; Client HUD vs. Entity-server/Suspense architecture; Web DOM vs. iOS/Android native-view models.
+## Saved work
 
-React code, local state, list identity, imports, and client Suspense execute as real React. The Entity server and native views are clearly labeled **educational models**, not a live game server or a React Native runtime. The generator 10 gate timer is a practice drill; it does not bypass the trial's final exit condition.
+`zen-fog-progress-v7` in localStorage stores your current question, code drafts, completed generators, language, and final comparison. Return to the same browser and address to resume. Localhost and hosted sites have separate storage; clearing site data clears progress. If browser storage is disabled, you can still use the current session and the saving note explains the limitation.
 
-## Audio and accessibility
+Earlier Syntax Lab/Fog keys remain untouched. V7 starts its own progress because its exercises differ from previous versions. Historical lesson, sandbox, and game source files remain in the repository, along with their regression tests. The active entry is now `src/ZenApp.tsx`; old editors, timers, game effects, and sandbox assets are excluded from the production app. Vite serves only `public-zen/`.
 
-Every generator has English (`en-US`) and Nepali (`ne-NP`) concept, field-drill, and code-mission narration. Play, Pause/Resume, Replay, 0.8x/1.0x/1.25x speed, and optional auto-play use the browser **Web Speech API**. Changing topic or language cancels stale speech.
+## Source guide
 
-A matching voice must be installed and exposed by the browser/OS. If no Nepali voice is available, Play is disabled with an explanation, and the Nepali transcript remains readable. English is never substituted for Nepali. Browser auto-play restrictions may require a Play click. Speech availability and any network behavior of system voices are controlled by the device, not a custom app speech service.
+| File | Purpose |
+| --- | --- |
+| `src/ZenApp.tsx` | Single-card walkthrough, keyboard submission, navigation, saving |
+| `src/zenLessons.ts` | All 16 English/Nepali questions, scaffolds, and hints |
+| `src/zenValidation.ts` | Babel syntax-tree checks; submitted code is never executed |
+| `src/zenProgress.ts` | Defensive loading of local progress |
+| `src/ZenSpeech.tsx` | One-button browser narration |
+| `src/zen.css` | Slate/sage theme, responsive spacing, reduced-motion support |
 
-**SFX are off by default.** Enable the SFX switch to hear short, quiet Web Audio cues on successful, perfect, missed, or final-exit checks. There is no automatic heartbeat soundtrack. Fog, sparks, and gate transitions respect reduced-motion preferences. The danger indicator is atmospheric only; there is no punishment timer.
+The stack is React, TypeScript, Vite, Tailwind CSS, and Framer Motion. The syntax checker loads on the first submission so it doesn’t delay the initial card.
 
-## Local code sandbox
-
-Monaco and its worker are loaded locally on entering a blueprint. `npm run build:sandbox` generates the Git-ignored `public/lesson-runtime.js`, then Vite copies it into `dist/`. React and Babel run in an iframe with **`sandbox="allow-scripts"` and no same-origin permission**. Learner code cannot access the parent document. Preview messages are tied to the expected frame, channel, source revision, and run ID. A CSP blocks connections/forms and limits resources; loop/function guards catch accidental runaway examples. This is a learning sandbox, not an adversarial-code hosting service.
-
-The runner supports React and provided local fixture modules. Imports, syntax errors, and runtime errors produce feedback. A completed generator remains earned even if a later experiment breaks its preview.
-
-## Saved trial and previous work
-
-Progress is stored only in this browser on this device:
-
-- `fog-survival-deck-v6`: current generator and display preference.
-- `fog-survival-missions-v6`: drill/blueprint completion, selected stage, code files, and hints.
-- `fog-survival-trial-v6`: verified repairs, perfect checks, exit status, Assist and SFX settings.
-- `deep-dive-audio-v5`: retained narration language, speed, and auto-play preferences.
-
-The v6 survivor blueprints differ from v5, so the new trial starts fresh. Existing `syntax-lab-deck-v3`, `deep-dive-missions-v5`, and `syntax-lab-v1` work is left untouched; old completion is never counted as a repaired v6 generator. Visual-demo controls reset when leaving their topic, while code drafts and repair history persist.
-
-Clearing site data clears saved work. Localhost and hosted sites use separate storage, so return to the same address/port. If storage is unavailable, the session remains usable and shows a saving warning.
-
-## Validate
+## Validation
 
 ```sh
-npm test          # 70 checks: drills, blueprints, audio, repair integrity, skill timing, gates, and legacy practice
-npm run build    # TypeScript + isolated runtime + production bundle
-npm run preview  # Serve dist/ locally
+npm test          # 111 tests, including the retained earlier-version checks
+npm run build    # TypeScript and production bundle
+npm run preview  # Open the production app locally
 ```
 
-Browser checks cover all 16 field drills, edited Monaco solutions, misses and assisted checks, restored repair history, the complete exit sequence, and mobile/Nepali presentation. Timed scoring, perfect checks, and optional audio cues also have focused tests. Actual spoken narration still depends on installed voices.
+V7 tests cover the full sixteen-step sequence, Enter submission, progressive hints, previous navigation, saved drafts, translated guidance, speech cancellation, unavailable voices, malformed storage, and code misconceptions. Chromium checks also cover the complete production walkthrough, completion/reload, mobile layouts at 320/390/768/1440px, and the absence of old editor/game assets and browser errors. Spoken audio itself depends on installed system voices.
 
-The repository remains `maxdahal/react-learn`. The existing Vercel configuration builds and publishes `dist/`; no deployment credentials are needed to run locally.
+The existing Vercel configuration uses `npm ci`, `npm run build`, and `dist/`. This update does not require new environment variables.
